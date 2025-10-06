@@ -1,15 +1,16 @@
-# docker-compose.yml
-version: '3.8'
+
 services:
-  postgres:
-    image: postgres:14-alpine
-    container_name: teamflow-db
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=teamflow
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
+    teamflow_db:
+      container_name: teamflow_db
+      image: postgres:latest
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: teamflow
+      ports:
+        - "5432:5432"
+      volumes:
+        - teamflow_db_data:/var/lib/postgresql/data
+      
+volumes:
+    teamflow_db_data:
