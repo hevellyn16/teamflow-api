@@ -1,8 +1,8 @@
 import fastify from 'fastify';
+import { routes } from './routes/routes';
 
-export const app = fastify();
+const app = fastify();
 
-// Aqui virão as rotas e configurações
-app.get('/', () => {
-  return { message: 'Bem-vindo à API TeamFlow!' };
-});
+app.register(routes);
+
+export { app };

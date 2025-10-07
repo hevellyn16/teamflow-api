@@ -1,0 +1,19 @@
+@baseUrl = http://localhost:3000
+
+# @name get_users
+
+GET {{baseUrl}}/users
+Content-Type: application/json
+
+###
+
+# @name create_user
+
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}

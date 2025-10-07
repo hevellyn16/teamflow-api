@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "tsc && cpy 'src/schema.prisma' 'dist/",
     "test": "jest",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -20,6 +21,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.7.0",
     "@types/supertest": "^6.0.3",
+    "cpy-cli": "^6.0.0",
     "eslint": "^9.37.0",
     "jest": "^30.2.0",
     "prettier": "^3.6.2",
