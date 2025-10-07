@@ -7,4 +7,6 @@ export interface UserRepository {
         password:string;
     }): Promise<User>;
     findAllUsers(): Promise<User[]>;
+
+    findByEmail(email: string): Promise<User | null>;
 }

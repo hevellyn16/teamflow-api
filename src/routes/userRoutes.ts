@@ -6,4 +6,5 @@ export function userRoutes(app: FastifyInstance) {
     
     app.post('/users', userController.createUser);
     app.get('/users', userController.getAllUsers);
+    app.post('/sessions', userController.authenticate);
 }
