@@ -1,9 +1,27 @@
 @baseUrl = http://localhost:3000
 
-# @name get_users
+@authToken = {{authenticate_user.response.body.token}}
+
+###
+
+ # @name create_diretor
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+ {
+   "name": "Jane Smith",                                                     
+   "email": "jane.smith@example.com",
+   "password": "securepassword"
+ }
+
+
+###
+
+ # @name get_users
 
 GET {{baseUrl}}/users
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 ###
 
@@ -26,6 +44,25 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "john.doe@example.com",
+  "email": "jane.smith@example.com",
   "password": "securepassword"
+}
+
+###
+
+# @name get_profile
+GET {{baseUrl}}/profile
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name update_profile
+PUT {{baseUrl}}/profile
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+ "name": "John Doe",
+ "email": "john.doe1@example.com"
 }

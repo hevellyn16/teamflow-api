@@ -1,4 +1,5 @@
 import { User } from '@prisma/client';
+import { UserUpdateBody } from '../../dto/user/UserUpdateBodySchema';
 
 export interface UserRepository {
     createUser(data: {
@@ -6,7 +7,13 @@ export interface UserRepository {
         email:string;
         password:string;
     }): Promise<User>;
+    
     findAllUsers(): Promise<User[]>;
 
     findByEmail(email: string): Promise<User | null>;
+
+    findById(id: string): Promise<User | null>;
+
+    update(data: UserUpdateBody, id: string): Promise<User>;
+
 }

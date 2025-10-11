@@ -1,6 +1,5 @@
 import { PrismaUserRepository } from "../repositories/prisma/PrismaUserRepository";
 import { compare } from "bcryptjs";
-import { User } from "@prisma/client";
 import  { FastifyInstance } from "fastify";
 import "@fastify/jwt";
 
@@ -19,17 +18,20 @@ export class AuthUserService {
 
     async execute({ email, password }: AuthRequest): Promise<AuthResponse> {
         const user = await this.userRepository.findByEmail(email);
-        if (!user) {
-            throw new Error('E-mail inválido!');
-        }
 
-        
+        if (!user) {
+            throw new Error('Credenciais erradas!');
+        }
 
         const isValidPassword = await compare(password, user.password);
         if (!isValidPassword) {
-            throw new Error('Senha inválida!');
+            throw new Error('Credenciais erradas!');
         }
 
+        if (!user.isActive) {
+            throw new Error('User is inactive');
+        }
+        
         const token = await this.app.jwt.sign({
             name: user.name,
             email: user.email,

@@ -1,0 +1,8 @@
+Client.http:
+    ☐ create diretor
+    ☐ 
+    ☐ create user
+    ☐ auth user
+    ☐ get user profile
+    ☐ update user profile
+    ☐ delete user profile

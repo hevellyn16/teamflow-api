@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import { UserCreateBody } from "../dto/user/UserCreateBodySchema";
 import { UserRepository } from "../repositories/interface/UserRepository";
 import { User } from '@prisma/client';
+import { UserUpdateBody, UserUpdateBodySchema } from "../dto/user/UserUpdateBodySchema";
 
 export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
@@ -26,4 +27,50 @@ export class UserService {
         return await this.userRepository.findAllUsers();
     }
 
+    async getUserById(id: string): Promise<User | null> {
+        const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    }
+
+    async updateUser(id: string, data: UserUpdateBody): Promise<User> {
+        const user = await this.userRepository.findById(id); // Garante que o usuário existe
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if(data.password){
+            data.password = await hash(data.password, 8);
+        }
+        
+        const updatedUser = await this.userRepository.update(
+            data, id
+        );
+        return updatedUser
+    }
+
+    async updateProfile(authUserId: string, data: UserUpdateBody): Promise<User> {
+        const user = await this.userRepository.findById(authUserId); // Garante que o usuário existe
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if(data.email){
+            const userWithEmail = await this.userRepository.findByEmail(data.email);
+            if (userWithEmail && userWithEmail.id !== authUserId) {
+                throw new Error('Email already in use');
+            }
+        }
+
+        if(data.password){
+            data.password = await hash(data.password, 8);
+        }
+
+        const updatedUser = await this.userRepository.update(
+            data, authUserId
+        );
+        return updatedUser;
+    }
 }
