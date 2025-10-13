@@ -29,7 +29,7 @@ export class AuthUserService {
         }
 
         if (!user.isActive) {
-            throw new Error('User is inactive');
+            throw new Error('User está inativo');
         }
         
         const token = await this.app.jwt.sign({

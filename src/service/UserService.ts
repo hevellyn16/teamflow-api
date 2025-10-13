@@ -3,6 +3,7 @@ import { UserCreateBody } from "../dto/user/UserCreateBodySchema";
 import { UserRepository } from "../repositories/interface/UserRepository";
 import { User } from '@prisma/client';
 import { UserUpdateBody, UserUpdateBodySchema } from "../dto/user/UserUpdateBodySchema";
+import { DIRUserUpdateBody, DIRUserUpdateBodySchema } from "../dto/user/DIRUserUpdateBodySchema";
 
 export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
@@ -35,10 +36,17 @@ export class UserService {
         return user;
     }
 
-    async updateUser(id: string, data: UserUpdateBody): Promise<User> {
+    async updateUser(id: string, data: DIRUserUpdateBody): Promise<User> {
         const user = await this.userRepository.findById(id); // Garante que o usuário existe
         if (!user) {
             throw new Error('User not found');
+        }
+
+        if(data.email){
+            const userWithEmail = await this.userRepository.findByEmail(data.email);
+            if (userWithEmail && userWithEmail.id !== id) {
+                throw new Error('Email already in use');
+            }
         }
 
         if(data.password){

@@ -22,6 +22,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isActive  Boolean  @default(true) @map("is_active")
+  deletedAt DateTime? @map("deleted_at")
+  avatar    String?  // URL do avatar do usuário
 
   @@map("users")
 }
@@ -32,3 +34,14 @@ enum Role {
   MEMBRO
 }
 
+
+model Setor {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  isActive  Boolean  @default(true) @map("is_active")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("setores")
+}
