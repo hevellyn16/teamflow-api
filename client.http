@@ -1,6 +1,8 @@
 @baseUrl = http://localhost:3000
 
-@authToken = {{authenticate_user.response.body.token}}
+@authToken = {{diretor_authenticate_user.response.body.token}}
+
+@authMember = {{member_authenticate_user.response.body.token}}
 
 ###
 
@@ -9,7 +11,7 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
  {
-   "name": "Jane Smith",                                                     
+   "name": "JaneSmith",                                           
    "email": "jane.smith@example.com",
    "password": "securepassword"
  }
@@ -19,7 +21,7 @@ Content-Type: application/json
 
  # @name get_users
 
-GET {{baseUrl}}/users
+GET {{baseUrl}}/users/getAll
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -27,38 +29,59 @@ Authorization: Bearer {{authToken}}
 
 # @name create_user
 
-POST {{baseUrl}}/users
+POST {{baseUrl}}/users/create
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword",
+  "role": "MEMBRO"
+}
+
+###
+
+# @name diretor_authenticate_user
+
+POST {{baseUrl}}/sessions
+Content-Type: application/json
+
+{
+  "email": "diretor@teamflow.com",
+  "password": "senhaforte123",
+  "role": "DIRETOR"
+}
+
+###
+
+# @name member_authenticate_user
+POST {{baseUrl}}/sessions
+Content-Type: application/json
+
+{
   "email": "john.doe@example.com",
   "password": "securepassword"
 }
 
 ###
 
-# @name authenticate_user
-
-POST {{baseUrl}}/sessions
-Content-Type: application/json
-
-{
-  "email": "jane.smith@example.com",
-  "password": "securepassword"
-}
-
-###
-
-# @name get_profile
-GET {{baseUrl}}/profile
+# @name get_user_by_id
+GET {{baseUrl}}/users/:id
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 ###
 
+# @name get_profile
+GET {{baseUrl}}/profile/myprofile
+Content-Type: application/json
+Authorization: Bearer {{authMember}}
+
+###
+
 # @name update_profile
-PUT {{baseUrl}}/profile
+PUT {{baseUrl}}/profile/update
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 

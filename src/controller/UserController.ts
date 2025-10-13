@@ -53,6 +53,36 @@ export class UserController {
         return reply.status(200).send(user);
     };
 
+    getProfile = async (request: FastifyRequest, reply: FastifyReply) => {
+        const user = request.user as { sub?: string } | undefined;
+        const authUserId = user?.sub;
+        if (!authUserId) {
+            return reply.status(401).send({ error: 'Unauthorized' });
+        }
+        try {
+            const user = await this.userService.getUserById(authUserId);
+            return reply.status(200).send(user);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Fetch profile failed";
+            return reply.status(400).send({ error: errorMessage });
+        }
+    };
+
+    getUserByEmail = async (request: FastifyRequest, reply: FastifyReply) => {
+        const user = request.user as { sub?: string } | undefined;
+        const authUserId = user?.sub;
+        if (!authUserId) {
+            return reply.status(401).send({ error: 'Unauthorized' });
+        }
+        try {
+            const user = await this.userService.getUserById(authUserId);
+            return reply.status(200).send(user);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : "Fetch profile failed";
+            return reply.status(400).send({ error: errorMessage });
+        }
+    };
+
     updateProfile = async (request: FastifyRequest, reply: FastifyReply) => {
         const user = request.user as { sub?: string } | undefined;
         const authUserId = user?.sub;

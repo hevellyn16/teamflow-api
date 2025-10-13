@@ -6,6 +6,9 @@ export interface UserRepository {
         name:string;
         email:string;
         password:string;
+        avatar?: string | null;
+        role?: 'DIRETOR' | 'COORDENADOR' | 'MEMBRO';
+        isActive?: boolean;
     }): Promise<User>;
     
     findAllUsers(): Promise<User[]>;
@@ -15,5 +18,9 @@ export interface UserRepository {
     findById(id: string): Promise<User | null>;
 
     update(data: UserUpdateBody, id: string): Promise<User>;
+
+    deactivate(id: string): Promise<void>;
+
+    findByName(name: string): Promise<User | null>;
 
 }

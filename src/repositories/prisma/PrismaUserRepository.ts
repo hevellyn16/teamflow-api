@@ -22,6 +22,9 @@ export class PrismaUserRepository implements UserRepository {
                 name,
                 email,
                 password,
+                avatar: null,
+                role: 'MEMBRO',
+                isActive: true,
             },
         });
     }
@@ -35,6 +38,19 @@ export class PrismaUserRepository implements UserRepository {
     async findById(id: string): Promise<User | null> {
         return await prisma.user.findUnique({
             where: { id },
+        });
+    }
+
+    async findByName(name: string): Promise<User | null> {
+        return await prisma.user.findFirst({
+            where: { name },
+        });
+    }
+
+    async deactivate(id: string): Promise<void> {
+        await prisma.user.update({
+            where: { id },
+            data: { isActive: false },
         });
     }
 }

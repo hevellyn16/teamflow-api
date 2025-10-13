@@ -20,6 +20,9 @@ export class UserService {
             name: data.name,
             email: data.email,
             password: passwordHash,
+            avatar: data.avatar,
+            role: data.role,
+            isActive: true,
         });
         return user;
     }
@@ -30,6 +33,22 @@ export class UserService {
 
     async getUserById(id: string): Promise<User | null> {
         const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    }
+
+    async getProfile(name: string): Promise<User> {
+        const user = await this.userRepository.findByName(name);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    }
+
+    async getUserByEmail(email: string): Promise<User | null> {
+        const user = await this.userRepository.findByEmail(email);
         if (!user) {
             throw new Error('User not found');
         }
@@ -81,4 +100,14 @@ export class UserService {
         );
         return updatedUser;
     }
+
+    async deactivateUser(id: string): Promise<void> {
+        const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        await this.userRepository.deactivate(id);
+    }
+
+
 }
