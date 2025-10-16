@@ -17,10 +17,11 @@ export interface UserRepository {
 
     findById(id: string): Promise<User | null>;
 
+    findByName(name: string): Promise<User | null>;
+
     update(data: UserUpdateBody, id: string): Promise<User>;
 
     deactivate(id: string): Promise<void>;
 
-    findByName(name: string): Promise<User | null>;
-
+    delete(id: string): Promise<void>;
 }

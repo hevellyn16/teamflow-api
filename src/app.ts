@@ -8,11 +8,9 @@ import { validatorCompiler, serializerCompiler, jsonSchemaTransform } from 'fast
 
 const app = fastify();
 
-// Configura o Fastify para entender os schemas do Zod
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
-// Registra o plugin principal do Swagger (gera a especificação OpenAPI)
 app.register(fastifySwagger, {
     openapi: {
         info: {
@@ -22,29 +20,26 @@ app.register(fastifySwagger, {
         },
         components: {
             securitySchemes: {
-                bearerAuth: { // Nome do esquema de segurança
+                bearerAuth: { 
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
             },
         },
-        security: [{ bearerAuth: [] }], // Aplica a segurança JWT globalmente na UI
+        security: [{ bearerAuth: [] }],
     },
-    transform: jsonSchemaTransform, // Transforma os schemas Zod em JSON Schema para o OpenAPI
+    transform: jsonSchemaTransform,
 });
 
-// Registra o plugin que gera a interface gráfica da documentação
 app.register(fastifySwaggerUi, {
     routePrefix: '/docs', // Endereço da documentação: http://localhost:3000/docs
 });
 
-// Registra o plugin do JWT
 app.register(fastifyJwt, {
     secret: env.JWT_SECRET,
 });
 
-// Registra todas as suas rotas
 app.register(routes);
 
 export { app };

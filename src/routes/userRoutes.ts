@@ -109,4 +109,25 @@ export async function userRoutes(app: FastifyInstance) {
         }
     }, userController.updateUser);
 
+    app.patch('/users/:id/deactivate', {
+        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
+        schema: {
+            summary: 'Desativar um usuário (Diretor)',
+            tags: ['Gerenciamento de Usuários'],
+            security: [{ bearerAuth: [] }],
+            params: z.object({ id: z.uuid() }),
+            response: { 204: z.null() }
+        }
+    }, userController.deactivateUser);
+
+    app.delete('/users/:id', {
+        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
+        schema: {
+            summary: 'Deletar um usuário (Diretor)',
+            tags: ['Gerenciamento de Usuários'],
+            security: [{ bearerAuth: [] }],
+            params: z.object({ id: z.uuid() }),
+            response: { 204: z.null() }
+        }
+    }, userController.deleteUser);
 }

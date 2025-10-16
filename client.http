@@ -6,39 +6,15 @@
 
 ###
 
- # @name create_diretor
-POST {{baseUrl}}/users
-Content-Type: application/json
-Authorization: Bearer {{authToken}}
-
- {
-   "name": "JaneSmith",                                           
-   "email": "jane.smith@example.com",
-   "password": "securepassword"
- }
-
-
-###
-
- # @name get_users
-
-GET {{baseUrl}}/users/getAll
-Content-Type: application/json
-Authorization: Bearer {{authToken}}
-
-###
-
 # @name create_user
-
 POST {{baseUrl}}/users
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "password": "securepassword",
-  "role": "MEMBRO"
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "password": "securepassword"
 }
 
 ###
@@ -67,6 +43,14 @@ Content-Type: application/json
 
 ###
 
+# @name get_users
+
+GET {{baseUrl}}/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
 # @name get_user_by_id
 GET {{baseUrl}}/users/:id
 Content-Type: application/json
@@ -75,29 +59,63 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name get_profile
-GET {{baseUrl}}/profile/myprofile
+GET {{baseUrl}}/profile
 Content-Type: application/json
 Authorization: Bearer {{authMember}}
 
 ###
 
 # @name update_profile
-PUT {{baseUrl}}/profile/update
+PUT {{baseUrl}}/users/c5436f52-1a2e-45c9-a11b-2d6ceb15a283
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
- "name": "John Doe",
- "email": "john.doe1@example.com"
+ "name": "JaneSmith",
+ "email": "jane.smith@example.com",
+ "role": "DIRETOR"
+}
+
+###
+
+# @name update_user
+PUT {{baseUrl}}/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "c5436f52-1a2e-45c9-a11b-2d6ceb15a283",
+  "name": "John Doe Updated",
+  "email": "john.doe1@example.com",
+  "role": "MEMBRO"
+}
+
+###
+
+# @name deactivate_user
+PATCH {{baseUrl}}/users/7c63a40d-6837-44bd-9224-ebc5d0ea11e0/deactivate
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "isActive": false
 }
 
 ###
 
 # @name delete_user
-DELETE {{baseUrl}}/users
+DELETE {{baseUrl}}/users/c5436f52-1a2e-45c9-a11b-2d6ceb15a283
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name create_sector
+
+POST {{baseUrl}}/sectors
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "id": "c5436f52-1a2e-45c9-a11b-2d6ceb15a283"
+  "name": "New Sector",
+  "description": "Description of the new sector"
 }
