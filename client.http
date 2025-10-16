@@ -9,6 +9,7 @@
  # @name create_diretor
 POST {{baseUrl}}/users
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
  {
    "name": "JaneSmith",                                           
@@ -29,7 +30,7 @@ Authorization: Bearer {{authToken}}
 
 # @name create_user
 
-POST {{baseUrl}}/users/create
+POST {{baseUrl}}/users
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -88,4 +89,15 @@ Authorization: Bearer {{authToken}}
 {
  "name": "John Doe",
  "email": "john.doe1@example.com"
+}
+
+###
+
+# @name delete_user
+DELETE {{baseUrl}}/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "id": "c5436f52-1a2e-45c9-a11b-2d6ceb15a283"
 }

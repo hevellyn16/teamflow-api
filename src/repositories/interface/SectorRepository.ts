@@ -1,0 +1,24 @@
+import { Sector } from "@prisma/client";
+import { SectorUpdateBody } from "../../dto/setor/SectorUpdateBodySchema";
+
+export interface SectorRepository {
+    create(data: {
+        name: string;
+        description?: string;
+        isActive: boolean;
+    }): Promise<Sector>;
+
+    update(id: string, data: SectorUpdateBody): Promise<Sector | null>;
+
+    delete(id: string): Promise<Sector | null>;
+
+    findById(id: string): Promise<Sector | null>;
+
+    findAll(): Promise<Sector[]>;
+
+    filterByName(name: string): Promise<Sector[]>;
+
+    filterByDescription(description: string): Promise<Sector[]>;
+
+    filterByIsActive(isActive: boolean): Promise<Sector[]>;
+}

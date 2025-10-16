@@ -108,4 +108,5 @@ export async function userRoutes(app: FastifyInstance) {
             response: { 200: UserResponseSchema }
         }
     }, userController.updateUser);
+
 }

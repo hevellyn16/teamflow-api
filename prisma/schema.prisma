@@ -23,10 +23,12 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
   isActive  Boolean  @default(true) @map("is_active")
   deletedAt DateTime? @map("deleted_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
   avatar    String?  // URL do avatar do usuário
 
   @@map("users")
 }
+
 
 enum Role {
   DIRETOR
@@ -35,7 +37,7 @@ enum Role {
 }
 
 
-model Setor {
+model Sector {
   id        String   @id @default(uuid())
   name      String   @unique
   description String?
@@ -45,9 +47,10 @@ model Setor {
   deletedAt DateTime? @map("deleted_at")
 
   @@map("setores")
+
 }
 
-model Projeto {
+model Project {
   id          String   @id @default(uuid())
   name        String
   description String?
@@ -55,6 +58,8 @@ model Projeto {
   updatedAt   DateTime @updatedAt @map("updated_at")
   isActive    Boolean  @default(true) @map("is_active")
   deletedAt   DateTime? @map("deleted_at")
+  status      ProjectStatus @default(PLANEJAMENTO)
+  startDate   DateTime? @map("start_date")
 
   @@map("projetos")
 }
