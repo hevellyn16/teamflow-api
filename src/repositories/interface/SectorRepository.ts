@@ -21,4 +21,6 @@ export interface SectorRepository {
     filterByDescription(description: string): Promise<Sector[]>;
 
     filterByIsActive(isActive: boolean): Promise<Sector[]>;
+
+    listOrFilter(filters: any): Promise<Sector[]>;
 }

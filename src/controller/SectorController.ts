@@ -4,86 +4,99 @@ import { SectorUpdateBodySchema } from "../dto/setor/SectorUpdateBodySchema";
 import { SectorService } from "../service/SectorService";
 import { z } from "zod";
 import { PrismaSectorRepository } from "../repositories/prisma/PrismaSectorRepository";
+import { request } from "https";
 
 export class SectorController {
-    private readonly setorService = new SectorService(new PrismaSectorRepository());
+    private readonly sectorService = new SectorService(new PrismaSectorRepository());
 
-    async createSetor(request: any, reply: FastifyReply) {
+    createSector = async (request: any, reply: FastifyReply) => {
         const body = SectorCreateBodySchema.parse(request.body);
-        const setor = await this.setorService.createSetor(body);
-        return reply.status(201).send(setor);
+        const sector = await this.sectorService.createSector(body);
+        return reply.status(201).send(sector);
     }
 
-    async getAllSetores(request: any, reply: FastifyReply) {
-        const setores = await this.setorService.getAllSetores();
-        return reply.status(200).send(setores);
+    getAllSectors = async (request: any, reply: FastifyReply) => {
+        const sectors = await this.sectorService.getAllSectors();
+        return reply.status(200).send(sectors);
     }
 
-    async getSetorById(request: any, reply: FastifyReply) {
+    getSectorById = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
-        const setor = await this.setorService.getSetorById(id);
-        if (!setor) {
-            return reply.status(404).send({ error: 'Setor not found' });
+        const sector = await this.sectorService.getSectorById(id);
+        if (!sector) {
+            return reply.status(404).send({ error: 'Sector not found' });
         }
-        return reply.status(200).send(setor);
+        return reply.status(200).send(sector);
     }
 
-    async updateSetor(request: any, reply: FastifyReply) {
+    updateSector = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
         const body = SectorUpdateBodySchema.parse(request.body);
         try {
-            const updatedSetor = await this.setorService.updateSetor(id, body);
-            return reply.status(200).send(updatedSetor);
+            const updatedSector = await this.sectorService.updateSector(id, body);
+            return reply.status(200).send(updatedSector);
         }
         catch (error) {
             return reply.status(404).send({ error: (error as Error).message });
         }
     }
 
-    async deleteSetor(request: any, reply: FastifyReply) {
+    deleteSector = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
         try {
-            const deletedSetor = await this.setorService.deleteSetor(id);
-            return reply.status(200).send(deletedSetor);
+            const deletedSector = await this.sectorService.deleteSector(id);
+            return reply.status(200).send(deletedSector);
         }
         catch (error) {
             return reply.status(404).send({ error: (error as Error).message });
         }
     }
 
-    async filterSetorsByName(request: any, reply: FastifyReply) {
+    filterSectorsByName = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
             name: z.string().min(1, "Name is required"),
         });
         const { name } = querySchema.parse(request.query);
-        const setores = await this.setorService.filterSetorsByName(name);
-        return reply.status(200).send(setores);
+        const sectors = await this.sectorService.filterSectorsByName(name);
+        return reply.status(200).send(sectors);
     }
 
-    async filterSetorsByDescription(request: any, reply: FastifyReply) {
+    filterSectorsByDescription = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
             description: z.string().min(1, "Description is required"),
         });
         const { description } = querySchema.parse(request.query);
-        const setores = await this.setorService.filterSetorsByDescription(description);
-        return reply.status(200).send(setores);
+        const sectors = await this.sectorService.filterSectorsByDescription(description);
+        return reply.status(200).send(sectors);
     }
 
-    async filterSetorsByIsActive(request: any, reply: FastifyReply) {
+    filterSectorsByIsActive = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
             isActive: z.coerce.boolean(),
         });
         const { isActive } = querySchema.parse(request.query);
-        const setores = await this.setorService.filterSetorsByIsActive(isActive);
-        return reply.status(200).send(setores);
+        const sectors = await this.sectorService.filterSectorsByIsActive(isActive);
+        return reply.status(200).send(sectors);
+    }
+
+    listOrFilter = async (request: any, reply: FastifyReply) => {
+        const filters = request.query as { name?: string; description?: string; isActive?: boolean };
+
+        try {
+            const sectors = await this.sectorService.listOrFilter(filters);
+            return reply.status(200).send(sectors);
+        } catch (err) {
+            console.error("Error fetching sectors:", err); 
+            return reply.status(500).send({ error: "Internal server error" });
+        }
     }
 }

@@ -26,9 +26,10 @@ model User {
   isDeleted Boolean  @default(false) @map("is_deleted")
   avatar    String?  // URL do avatar do usuário
 
+  projects   Project[]
+
   @@map("users")
 }
-
 
 enum Role {
   DIRETOR
@@ -46,6 +47,8 @@ model Sector {
   isActive  Boolean  @default(true) @map("is_active")
   deletedAt DateTime? @map("deleted_at")
 
+  projects  Project[]
+
   @@map("setores")
 
 }
@@ -61,7 +64,14 @@ model Project {
   status      ProjectStatus @default(PLANEJAMENTO)
   startDate   DateTime? @map("start_date")
 
+  sectorId String @map("sector_id")
+  setor   Sector @relation(fields: [sectorId], references: [id])
+  
+  users User[] 
+
   @@map("projetos")
+
+  @@unique([name, sectorId], name: "unique_project_name_per_sector")
 }
 
 enum ProjectStatus {

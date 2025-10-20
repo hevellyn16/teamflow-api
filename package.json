@@ -41,6 +41,6 @@
     "zod": "^4.1.12"
   },
   "prisma": {
-    "seed": "tsx src/repositories/prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }

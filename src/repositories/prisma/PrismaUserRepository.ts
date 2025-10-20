@@ -43,7 +43,9 @@ export class PrismaUserRepository implements UserRepository {
 
     async findByName(name: string): Promise<User | null> {
         return await prisma.user.findFirst({
-            where: { name },
+            where: { 
+                name: { contains: name, mode: 'insensitive' }
+            },
         });
     }
 

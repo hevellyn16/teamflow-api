@@ -52,4 +52,21 @@ export class PrismaSectorRepository implements SectorRepository {
         });
     }
 
+    async listOrFilter(filters: any): Promise<Sector[]> {
+        const whereClause: any = {};
+        if (filters.name) {
+            whereClause.name = { contains: filters.name, mode: 'insensitive' };
+        }
+        if (filters.description) {
+            whereClause.description = { contains: filters.description, mode: 'insensitive' };
+        }
+        if (filters.isActive !== undefined) {
+            whereClause.isActive = filters.isActive === 'true';
+        }
+        return await prisma.sector.findMany({
+            where: whereClause,
+            orderBy: { name: 'asc' },
+        });
+    }
+
 }

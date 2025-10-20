@@ -6,53 +6,67 @@ import { SectorRepository } from "../repositories/interface/SectorRepository";
 export class SectorService {
     constructor(private readonly sectorRepository: SectorRepository) {}
 
-    async createSetor(data: SectorCreateBody): Promise<Sector> {
-        const setor = await this.sectorRepository.create(data);
-        return setor;
+    async createSector(data: SectorCreateBody): Promise<Sector> {
+        const sectorExistsByName = await this.sectorRepository.filterByName(data.name);
+
+        if (sectorExistsByName.length > 0) {
+            throw new Error('Sector with this name already exists');
+        }
+
+        const sector = await this.sectorRepository.create({
+            name: data.name,
+            description: data.description,
+            isActive: true,
+        });
+        return sector;
     }
 
-    async getAllSetores(): Promise<Sector[]> {
+    async getAllSectors(): Promise<Sector[]> {
         return await this.sectorRepository.findAll();
     }
 
-    async getSetorById(id: string): Promise<Sector | null> {
-        const setor = await this.sectorRepository.findById(id);
-        return setor;
+    async getSectorById(id: string): Promise<Sector | null> {
+        const sector = await this.sectorRepository.findById(id);
+        return sector;
     }
 
-    async updateSetor(id: string, data: SectorUpdateBody): Promise<Sector> {
-        const setor = await this.sectorRepository.findById(id); // Garante que o setor existe
-        if (!setor) {
+    async updateSector(id: string, data: SectorUpdateBody): Promise<Sector> {
+        const sector = await this.sectorRepository.findById(id); // Garante que o setor existe
+        if (!sector) {
             throw new Error('Setor not found');
         }
-        const updatedSetor = await this.sectorRepository.update(id, data);
-        if (!updatedSetor) {
+        const updatedSector = await this.sectorRepository.update(id, data);
+        if (!updatedSector) {
             throw new Error('Failed to update setor');
         }
-        return updatedSetor;
+        return updatedSector;
     }
 
-    async deleteSetor(id: string): Promise<Sector> {
-        const setor = await this.sectorRepository.findById(id);
-        if (!setor) {
-            throw new Error('Setor not found');
+    async deleteSector(id: string): Promise<Sector> {
+        const sector = await this.sectorRepository.findById(id);
+        if (!sector) {
+            throw new Error('Sector not found');
         }
-        const deletedSetor = await this.sectorRepository.delete(id);
-        if (!deletedSetor) {
-            throw new Error('Failed to delete setor');
+        const deletedSector = await this.sectorRepository.delete(id);
+        if (!deletedSector) {
+            throw new Error('Failed to delete sector');
         }
-        return deletedSetor;
+        return deletedSector;
     }
 
-    async filterSetorsByName(name: string): Promise<Sector[]> {
+    async filterSectorsByName(name: string): Promise<Sector[]> {
         return this.sectorRepository.filterByName(name);
     }
 
-    async filterSetorsByDescription(description: string): Promise<Sector[]> {
+    async filterSectorsByDescription(description: string): Promise<Sector[]> {
         return this.sectorRepository.filterByDescription(description);
     }
 
-    async filterSetorsByIsActive(isActive: boolean): Promise<Sector[]> {
+    async filterSectorsByIsActive(isActive: boolean): Promise<Sector[]> {
         return this.sectorRepository.filterByIsActive(isActive);
+    }
+
+    async listOrFilter(filters: any): Promise<Sector[]> {
+        return this.sectorRepository.listOrFilter(filters);
     }
 }

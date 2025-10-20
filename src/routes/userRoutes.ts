@@ -54,7 +54,7 @@ export async function userRoutes(app: FastifyInstance) {
 
     /** Rotas de Gerenciamento de Usuários (Acesso de Diretor) **/
     app.post('/users', {
-        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
+       onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Criar um novo usuário (Diretor)',
             description: 'Permite que um Diretor cadastre novos usuários.',

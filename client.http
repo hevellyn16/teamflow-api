@@ -12,8 +12,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Jane Smith",
-  "email": "jane.smith@example.com",
+  "name": "Sarah Connor",
+  "email": "sarah.connor@example.com",
   "password": "securepassword"
 }
 
@@ -26,8 +26,7 @@ Content-Type: application/json
 
 {
   "email": "diretor@teamflow.com",
-  "password": "senhaforte123",
-  "role": "DIRETOR"
+  "password": "senhaforte123"
 }
 
 ###
@@ -37,8 +36,8 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "john.doe@example.com",
-  "password": "securepassword"
+  "email": "sarah.connor@example.com",
+  "password": "newsecurepassword"
 }
 
 ###
@@ -52,7 +51,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name get_user_by_id
-GET {{baseUrl}}/users/:id
+GET {{baseUrl}}/users/5458fe2f-d047-43f2-a7dc-81a3047bb535
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -66,14 +65,12 @@ Authorization: Bearer {{authMember}}
 ###
 
 # @name update_profile
-PUT {{baseUrl}}/users/c5436f52-1a2e-45c9-a11b-2d6ceb15a283
+PUT {{baseUrl}}/profile
 Content-Type: application/json
-Authorization: Bearer {{authToken}}
+Authorization: Bearer {{authMember}}
 
 {
- "name": "JaneSmith",
- "email": "jane.smith@example.com",
- "role": "DIRETOR"
+  "password": "newsecurepassword"
 }
 
 ###
@@ -110,12 +107,74 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name create_sector
-
 POST {{baseUrl}}/sectors
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "New Sector",
-  "description": "Description of the new sector"
+  "name": "Teste",
+  "description": "Setor de teste"
 }
+
+###
+
+# @name get_sectors
+GET {{baseUrl}}/sectors
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name get_sector_by_id
+GET {{baseUrl}}/sectors/870d6369-16c2-47f5-8701-7108eabcbc3b
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name update_sector
+PUT {{baseUrl}}/sectors/8bdc976b-74be-45d1-b497-a6fbcfb46fae
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Front-End",
+  "description": "Setor responsável pelo desenvolvimento do front-end.",
+  "isActive": true
+}
+
+###
+
+# @name delete_sector
+DELETE {{baseUrl}}/sectors/11f422a1-ac34-4224-a698-36ea3f0e00a5
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name list_or_filter_sectors
+GET {{baseUrl}}/sectors?name=Teste&isActive=true
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name create_project
+POST {{baseUrl}}/projects
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Projeto X",
+  "description": "Descrição do Projeto X",
+  "status": "EM_ANDAMENTO",
+  "sectorId": "8bdc976b-74be-45d1-b497-a6fbcfb46fae",
+  "startDate": "2024-07-01"
+}
+
+###
+
+# @name get_projects
+GET {{baseUrl}}/projects
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+

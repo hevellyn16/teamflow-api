@@ -1,48 +1,46 @@
 import type { FastifyInstance } from "fastify";
-import { SetorController } from "../controller/SectorController";
+import { SectorController } from "../controller/SectorController";
 import { authMiddleware, verifyUserRole } from "../middlewares/auth";
 import { z } from "zod";
-import { Role } from "@prisma/client";
-import { SetorCreateBodySchema } from "../dto/setor/SectorCreateBodySchema";
-import { SetorUpdateBodySchema } from "../dto/setor/SectorUpdateBodySchema";
+import { SectorCreateBodySchema } from "../dto/setor/SectorCreateBodySchema";
+import { SectorUpdateBodySchema } from "../dto/setor/SectorUpdateBodySchema";
 
 // Schema para a resposta de um setor
 const SetorResponseSchema = z.object({
     id: z.uuid(),
-    nome: z.string(),
-    descricao: z.string().nullable(),
-    criadoEm: z.date(),
-    atualizadoEm: z.date(),
+    name: z.string(),
+    description: z.string().nullable(),
+    isActive: z.boolean(),
 });
 
-export async function setorRoutes(app: FastifyInstance) {
-    const setorController = new SetorController();
+export async function sectorRoutes(app: FastifyInstance) {
+    const sectorController = new SectorController();
 
     /** Rotas de Gerenciamento de Setores (Acesso de Diretor) **/
-    app.post('/setores', {
+    app.post('/sectors', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Criar um novo setor (Diretor)',
             description: 'Permite que um Diretor crie novos setores.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
-            body: SetorCreateBodySchema,
+            body: SectorCreateBodySchema,
             response: { 201: SetorResponseSchema },
         }
-    }, setorController.createSetor.bind(setorController));
+    }, sectorController.createSector);
 
-    app.get('/setores', {
+    app.get('/sectors', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
-            summary: 'Listar todos os setores (Diretor)',
+            summary: 'Listar todos os sectors (Diretor)',
             description: 'Permite que um Diretor veja todos os setores cadastrados.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
             response: { 200: z.array(SetorResponseSchema) },
         }
-    }, setorController.getAllSetores.bind(setorController));
+    }, sectorController.getAllSectors);
 
-    app.get('/setores/:id', {
+    app.get('/sectors/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Obter um setor por ID (Diretor)',
@@ -54,9 +52,9 @@ export async function setorRoutes(app: FastifyInstance) {
             }),
             response: { 200: SetorResponseSchema },
         }
-    }, setorController.getSetorById.bind(setorController));
+    }, sectorController.getSectorById);
 
-    app.put('/setores/:id', {
+    app.put('/sectors/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Atualizar um setor por ID (Diretor)',
@@ -66,12 +64,12 @@ export async function setorRoutes(app: FastifyInstance) {
             params: z.object({
                 id: z.uuid(),
             }),
-            body: SetorUpdateBodySchema,
+            body: SectorUpdateBodySchema,
             response: { 200: SetorResponseSchema },
         }
-    }, setorController.updateSetor.bind(setorController));
+    }, sectorController.updateSector);
 
-    app.delete('/setores/:id', {
+    app.delete('/sectors/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Deletar um setor por ID (Diretor)',
@@ -83,29 +81,21 @@ export async function setorRoutes(app: FastifyInstance) {
             }),
             response: { 204: z.void() },
         }
-    }, setorController.deleteSetor.bind(setorController));
+    }, sectorController.deleteSector);
 
-    app.get('/setores/public', {
-        onRequest: [authMiddleware],
+   /* app.get('/sectors', {
+        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
-            summary: 'Filtrar os setores (Acesso Público)',
-            description: 'Permite que qualquer usuário (autenticado) filtre os setores por nome ou descrição.',
+            summary: 'Listar ou filtrar setores (Diretor)',
+            description: 'Permite que um Diretor liste todos os setores ou filtre por nome, descrição ou status ativo.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
             query: z.object({
                 name: z.string().min(1).optional(),
                 description: z.string().min(1).optional(),
-            }).refine(data => data.name || data.description, { message: "At least one of 'name' or 'description' must be provided" }),
+                isActive: z.coerce.boolean().optional(),
+            }),
             response: { 200: z.array(SetorResponseSchema) },
-        }
-    }, async (request, reply) => {
-        const { name, description } = request.query as { name?: string; description?: string };
-        if (name) {
-            return setorController.filterSetorsByName(request, reply);
-        }
-        if (description) {
-            return setorController.filterSetorsByDescription(request, reply);
-        }
-        return reply.status(200).send({ error: "At least one of 'name' or 'description' must be provided" });
-    });
+    }
+    }, sectorController.listOrFilter); */
 }
