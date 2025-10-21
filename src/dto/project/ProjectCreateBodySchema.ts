@@ -7,8 +7,9 @@ export const ProjectCreateBodySchema = z.object({
   createdAt: z.date().optional().default(new Date()),
   updatedAt: z.date().optional().default(new Date()),
   ProjectStatus: z.enum(['PLANEJAMENTO', 'EM_ANDAMENTO', 'PAUSADO', 'CONCLUIDO']).optional().default('PLANEJAMENTO'),
-  sector: z.uuid("Sector ID must be a valid UUID").optional(),
-  users: z.array(z.uuid("User ID must be a valid UUID")).optional(),
+  sector: z.uuid("Sector ID must be a valid UUID"),
+  users: z.array(z.email("User email must be a valid email")).optional(),
+  startDate: z.coerce.date().optional(),
 });
 
 export type ProjectCreateBody = z.infer<typeof ProjectCreateBodySchema>;

@@ -1,5 +1,5 @@
 import { Sector } from "@prisma/client";
-import { SectorUpdateBody } from "../../dto/setor/SectorUpdateBodySchema";
+import { SectorUpdateBody } from "../../dto/sector/SectorUpdateBodySchema";
 
 export interface SectorRepository {
     create(data: {

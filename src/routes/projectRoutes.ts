@@ -17,7 +17,10 @@ const ProjectResponseSchema = z.object({
     startDate: z.date().nullable(),
     sectorId: z.uuid(),
     createdAt: z.date(),
-    updatedAt: z.date(),
+    updatedAt: z.date().optional(),
+    users: z.array(z.object({
+        email: z.email(),
+    })).optional(),
 });
 
 export async function projectRoutes(app: FastifyInstance) {
@@ -66,7 +69,7 @@ export async function projectRoutes(app: FastifyInstance) {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
             summary: 'Atualizar um projeto por ID (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor atualize os detalhes de um projeto específico.',
+            description: 'Permite que um Coordenador ou Diretor atualize os detalhes de um projeto específico.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             params: z.object({

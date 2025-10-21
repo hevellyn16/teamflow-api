@@ -1,6 +1,6 @@
 import { Sector } from "@prisma/client";
-import { SectorUpdateBody } from "../../dto/setor/SectorUpdateBodySchema";
-import { SectorCreateBody } from "../../dto/setor/SectorCreateBodySchema";
+import { SectorUpdateBody } from "../../dto/sector/SectorUpdateBodySchema";
+import { SectorCreateBody } from "../../dto/sector/SectorCreateBodySchema";
 import { SectorRepository } from "../interface/SectorRepository";
 import { prisma } from "../../lib/prisma";
 

@@ -5,21 +5,23 @@ import { ProjectRepository } from "../interface/ProjectRepository";
 import { prisma } from "../../lib/prisma";
 
 export class PrismaProjectRepository implements ProjectRepository {
-    async create(data: ProjectCreateBody): Promise<Project> {
-        // map DTO fields to Prisma create input: connect sector by id and map ProjectStatus -> status
-        const { sector, ProjectStatus: dtoStatus, users, ...rest } = data;
+    async create(data: ProjectCreateBody): Promise<Project>  {
         return await prisma.project.create({
             data: {
-                ...rest,
-                status: dtoStatus as ProjectStatus,
-                setor: {
-                    connect: { id: sector },
+                name: data.name,
+                description: data.description,
+                isActive: data.isActive,
+                createdAt: data.createdAt,
+                sector: {
+                    connect: { id: data.sector },
                 },
-                users: users
+                users: data.users
                     ? {
-                          connect: users.map((userId) => ({ id: userId })),
+                          connect: data.users.map((email) => ({ email })),
                       }
                     : undefined,
+                status: data.ProjectStatus as ProjectStatus,
+                startDate: data.startDate,
             },
         });
     }
@@ -34,14 +36,14 @@ export class PrismaProjectRepository implements ProjectRepository {
         }
 
         if (sector) {
-            updateData.setor = {
+            updateData.sector = {
                 connect: { id: sector },
             };
         }
 
         if (users) {
             updateData.users = {
-                set: users.map((userId) => ({ id: userId })),
+                set: users.map((email) => ({ email })),
             };
         }
 
@@ -68,10 +70,11 @@ export class PrismaProjectRepository implements ProjectRepository {
     }
 
     async findByName(name: string): Promise<Project | null> {
-        const projects = await prisma.project.findMany({
-            where: { name },
+        return await prisma.project.findFirst({
+            where: { 
+                name: { contains: name, mode: 'insensitive' }
+            },
         });
-        return projects[0] || null;
     }
 
     async filterByIsActive(isActive: boolean): Promise<Project[]> {
@@ -101,12 +104,6 @@ export class PrismaProjectRepository implements ProjectRepository {
                     },
                 },
             },
-        });
-    }
-
-    async filterByName(name: string): Promise<Project[]> {
-        return await prisma.project.findMany({
-            where: { name },
         });
     }
 }

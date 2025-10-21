@@ -1,6 +1,6 @@
 import type { FastifyReply } from "fastify";
-import { SectorCreateBodySchema } from "../dto/setor/SectorCreateBodySchema";
-import { SectorUpdateBodySchema } from "../dto/setor/SectorUpdateBodySchema";
+import { SectorCreateBodySchema } from "../dto/sector/SectorCreateBodySchema";
+import { SectorUpdateBodySchema } from "../dto/sector/SectorUpdateBodySchema";
 import { SectorService } from "../service/SectorService";
 import { z } from "zod";
 import { PrismaSectorRepository } from "../repositories/prisma/PrismaSectorRepository";

@@ -47,7 +47,7 @@ export class UserService {
         return user;
     }
 
-    findByName(name: string): Promise<User | null> {
+    async findByName(name: string): Promise<User | null> {
         return this.userRepository.findByName(name);
     }
 

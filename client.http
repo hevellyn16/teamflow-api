@@ -76,15 +76,12 @@ Authorization: Bearer {{authMember}}
 ###
 
 # @name update_user
-PUT {{baseUrl}}/users
+PUT {{baseUrl}}/users/0680f316-1728-46f9-9933-c0bfb3e7e699
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "id": "c5436f52-1a2e-45c9-a11b-2d6ceb15a283",
-  "name": "John Doe Updated",
-  "email": "john.doe1@example.com",
-  "role": "MEMBRO"
+  "role": "COORDENADOR"
 }
 
 ###
@@ -152,7 +149,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name list_or_filter_sectors
-GET {{baseUrl}}/sectors?name=Teste&isActive=true
+GET {{baseUrl}}/sectors?name=Teste&isActive=false
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -164,11 +161,9 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Projeto X",
+  "name": "Projeto Y",
   "description": "Descrição do Projeto X",
-  "status": "EM_ANDAMENTO",
-  "sectorId": "8bdc976b-74be-45d1-b497-a6fbcfb46fae",
-  "startDate": "2024-07-01"
+  "sector": "8a8dc62d-b486-4f50-87d0-320ac8dbed4e"
 }
 
 ###
@@ -177,4 +172,15 @@ Authorization: Bearer {{authToken}}
 GET {{baseUrl}}/projects
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
+
+###
+
+# @name update_project
+PUT {{baseUrl}}/projects/6d691f5b-a605-4257-9821-46d9befdf535
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "startDate": "2025-10-20T23:23:03.031Z"
+}
 

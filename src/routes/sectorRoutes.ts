@@ -2,8 +2,8 @@ import type { FastifyInstance } from "fastify";
 import { SectorController } from "../controller/SectorController";
 import { authMiddleware, verifyUserRole } from "../middlewares/auth";
 import { z } from "zod";
-import { SectorCreateBodySchema } from "../dto/setor/SectorCreateBodySchema";
-import { SectorUpdateBodySchema } from "../dto/setor/SectorUpdateBodySchema";
+import { SectorCreateBodySchema } from "../dto/sector/SectorCreateBodySchema";
+import { SectorUpdateBodySchema } from "../dto/sector/SectorUpdateBodySchema";
 
 // Schema para a resposta de um setor
 const SetorResponseSchema = z.object({
@@ -83,19 +83,19 @@ export async function sectorRoutes(app: FastifyInstance) {
         }
     }, sectorController.deleteSector);
 
-   /* app.get('/sectors', {
-        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
+     app.get('/sector', {
+        preHandler: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Listar ou filtrar setores (Diretor)',
             description: 'Permite que um Diretor liste todos os setores ou filtre por nome, descrição ou status ativo.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
-            query: z.object({
+            params: z.object({
                 name: z.string().min(1).optional(),
                 description: z.string().min(1).optional(),
                 isActive: z.coerce.boolean().optional(),
             }),
             response: { 200: z.array(SetorResponseSchema) },
     }
-    }, sectorController.listOrFilter); */
+    }, sectorController.listOrFilter);
 }

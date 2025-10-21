@@ -49,7 +49,7 @@ model Sector {
 
   projects  Project[]
 
-  @@map("setores")
+  @@map("sectors")
 
 }
 
@@ -65,11 +65,11 @@ model Project {
   startDate   DateTime? @map("start_date")
 
   sectorId String @map("sector_id")
-  setor   Sector @relation(fields: [sectorId], references: [id])
+  sector   Sector @relation(fields: [sectorId], references: [id])
   
   users User[] 
 
-  @@map("projetos")
+  @@map("projects")
 
   @@unique([name, sectorId], name: "unique_project_name_per_sector")
 }

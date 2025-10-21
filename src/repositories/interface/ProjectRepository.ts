@@ -10,6 +10,7 @@ export interface ProjectRepository {
         updatedAt: Date;
         ProjectStatus: 'PLANEJAMENTO' | 'EM_ANDAMENTO' | 'PAUSADO' | 'CONCLUIDO';
         sector: string;
+        startDate?: Date;
         users?: string[];
     }): Promise<Project>;
 
@@ -28,8 +29,6 @@ export interface ProjectRepository {
     filterBySector(sectorId: string): Promise<Project[]>;
 
     filterByUser(userId: string): Promise<Project[]>;
-
-    filterByName(name: string): Promise<Project[]>;
 
     delete(id: string): Promise<Project | null>;
 }

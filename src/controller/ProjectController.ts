@@ -2,7 +2,7 @@ import { FastifyReply } from "fastify";
 import { ProjectCreateBodySchema } from "../dto/project/ProjectCreateBodySchema";
 import { ProjectUpdateBodySchema } from "../dto/project/ProjectUpdateBodySchema";
 import { ProjectService } from "../service/ProjectService";
-import { z } from "zod";
+import { email, z } from "zod";
 import { PrismaProjectRepository } from "../repositories/prisma/PrismaProjectRepository";
 
 export class ProjectController {
