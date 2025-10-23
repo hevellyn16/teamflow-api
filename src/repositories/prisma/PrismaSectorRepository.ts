@@ -18,9 +18,13 @@ export class PrismaSectorRepository implements SectorRepository {
         });
     }
 
-    async delete(id: string): Promise<Sector | null> {
-        return await prisma.sector.delete({
+    async deactivate(id: string): Promise<Sector | null> {
+        return await prisma.sector.update({
             where: { id },
+            data: {
+                isActive: false,
+                updatedAt: new Date(),
+            },
         });
     }
 

@@ -47,14 +47,14 @@ export class SectorController {
         }
     }
 
-    deleteSector = async (request: any, reply: FastifyReply) => {
+    deactivateSector = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
         try {
-            const deletedSector = await this.sectorService.deleteSector(id);
-            return reply.status(200).send(deletedSector);
+            const deactivatedSector = await this.sectorService.deactivateSector(id);
+            return reply.status(200).send(deactivatedSector);
         }
         catch (error) {
             return reply.status(404).send({ error: (error as Error).message });

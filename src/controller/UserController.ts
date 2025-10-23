@@ -136,18 +136,4 @@ export class UserController {
             return reply.status(400).send({ error: errorMessage });
         }
     };
-
-    deleteUser = async (request: FastifyRequest, reply: FastifyReply) => {
-        const paramsSchema = z.object({
-            id: z.uuid(),
-        });
-        const { id } = paramsSchema.parse(request.params);
-        try {
-            await this.userService.deleteUser(id);
-            return reply.status(204).send();
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Delete failed";
-            return reply.status(400).send({ error: errorMessage });
-        }
-    };
 }

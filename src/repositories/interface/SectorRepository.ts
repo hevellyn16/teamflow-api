@@ -10,7 +10,7 @@ export interface SectorRepository {
 
     update(id: string, data: SectorUpdateBody): Promise<Sector | null>;
 
-    delete(id: string): Promise<Sector | null>;
+    deactivate(id: string): Promise<Sector | null>;
 
     findById(id: string): Promise<Sector | null>;
 

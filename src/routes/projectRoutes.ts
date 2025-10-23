@@ -80,11 +80,11 @@ export async function projectRoutes(app: FastifyInstance) {
         }
     }, projectController.updateProject);
 
-    app.delete('/projects/:id', {
+    app.put('/projects/deact/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
-            summary: 'Deletar um projeto por ID (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor delete um projeto específico.',
+            summary: 'Desativar um projeto por ID (Gerente/Diretor)',
+            description: 'Permite que um Gerente ou Diretor desative um projeto específico.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             params: z.object({
@@ -92,5 +92,5 @@ export async function projectRoutes(app: FastifyInstance) {
             }),
             response: { 204: z.void() },
         }
-    }, projectController.deleteProject);
+    }, projectController.deactivateProject);
 }

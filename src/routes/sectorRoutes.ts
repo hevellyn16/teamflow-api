@@ -69,11 +69,11 @@ export async function sectorRoutes(app: FastifyInstance) {
         }
     }, sectorController.updateSector);
 
-    app.delete('/sectors/:id', {
+    app.put('/sectors/deact/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
-            summary: 'Deletar um setor por ID (Diretor)',
-            description: 'Permite que um Diretor delete um setor específico.',
+            summary: 'Desativar um setor por ID (Diretor)',
+            description: 'Permite que um Diretor desative um setor específico.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
             params: z.object({
@@ -81,7 +81,7 @@ export async function sectorRoutes(app: FastifyInstance) {
             }),
             response: { 204: z.void() },
         }
-    }, sectorController.deleteSector);
+    }, sectorController.deactivateSector);
 
      app.get('/sector', {
         preHandler: [authMiddleware, verifyUserRole('DIRETOR')],

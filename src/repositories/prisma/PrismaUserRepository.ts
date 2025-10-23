@@ -16,14 +16,14 @@ export class PrismaUserRepository implements UserRepository {
         return await prisma.user.findMany();
     }
 
-    async createUser({ name, email, password }: UserCreateBody): Promise<User> {
+    async createUser({ name, email, password, role }: UserCreateBody): Promise<User> {
         return await prisma.user.create({
             data: {
                 name,
                 email,
                 password,
                 avatar: null,
-                role: 'MEMBRO',
+                role,
                 isActive: true,
             },
         });
@@ -53,12 +53,6 @@ export class PrismaUserRepository implements UserRepository {
         await prisma.user.update({
             where: { id },
             data: { isActive: false },
-        });
-    }
-
-    async delete(id: string): Promise<void> {
-        await prisma.user.delete({
-            where: { id },
         });
     }
 }

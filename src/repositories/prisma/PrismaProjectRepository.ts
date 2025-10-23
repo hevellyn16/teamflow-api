@@ -53,12 +53,16 @@ export class PrismaProjectRepository implements ProjectRepository {
         });
     }
 
-    async delete(id: string): Promise<Project | null> {
-        return await prisma.project.delete({
+    async deactivate(id: string): Promise<Project | null> {
+        return await prisma.project.update({
             where: { id },
+            data: {
+                isActive: false,
+                updatedAt: new Date(),
+            },
         });
     }
-
+    
     async findById(id: string): Promise<Project | null> {
         return await prisma.project.findUnique({
             where: { id },

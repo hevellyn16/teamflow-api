@@ -18,12 +18,10 @@ model User {
   email     String   @unique
   name      String?
   password  String
-  role      Role     @default(MEMBRO)
+  role      Role     
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isActive  Boolean  @default(true) @map("is_active")
-  deletedAt DateTime? @map("deleted_at")
-  isDeleted Boolean  @default(false) @map("is_deleted")
   avatar    String?  // URL do avatar do usuário
 
   projects   Project[]
@@ -45,7 +43,6 @@ model Sector {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isActive  Boolean  @default(true) @map("is_active")
-  deletedAt DateTime? @map("deleted_at")
 
   projects  Project[]
 
@@ -60,7 +57,6 @@ model Project {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   isActive    Boolean  @default(true) @map("is_active")
-  deletedAt   DateTime? @map("deleted_at")
   status      ProjectStatus @default(PLANEJAMENTO)
   startDate   DateTime? @map("start_date")
 

@@ -64,7 +64,7 @@ export async function userRoutes(app: FastifyInstance) {
                 name: z.string(),
                 email: z.email(),
                 password: z.string().min(8),
-                role: z.enum(Role).optional(),
+                role: z.enum(Role),
             }),
             response: { 201: UserResponseSchema }
         }
@@ -119,15 +119,4 @@ export async function userRoutes(app: FastifyInstance) {
             response: { 204: z.null() }
         }
     }, userController.deactivateUser);
-
-    app.delete('/users/:id', {
-        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
-        schema: {
-            summary: 'Deletar um usuário (Diretor)',
-            tags: ['Gerenciamento de Usuários'],
-            security: [{ bearerAuth: [] }],
-            params: z.object({ id: z.uuid() }),
-            response: { 204: z.null() }
-        }
-    }, userController.deleteUser);
 }

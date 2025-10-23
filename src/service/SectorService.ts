@@ -41,17 +41,22 @@ export class SectorService {
         }
         return updatedSector;
     }
-
-    async deleteSector(id: string): Promise<Sector> {
+    
+    async deactivateSector(id: string): Promise<Sector> {
         const sector = await this.sectorRepository.findById(id);
         if (!sector) {
             throw new Error('Sector not found');
         }
-        const deletedSector = await this.sectorRepository.delete(id);
-        if (!deletedSector) {
-            throw new Error('Failed to delete sector');
+
+        if (!sector.isActive) {
+            throw new Error('Sector is already deactivated');
         }
-        return deletedSector;
+
+        const deactivatedSector = await this.sectorRepository.deactivate(id);
+        if (!deactivatedSector) {
+            throw new Error('Failed to deactivate sector');
+        }
+        return deactivatedSector;
     }
 
     async filterSectorsByName(name: string): Promise<Sector[]> {

@@ -7,7 +7,7 @@ export interface UserRepository {
         email:string;
         password:string;
         avatar?: string | null;
-        role?: 'DIRETOR' | 'COORDENADOR' | 'MEMBRO';
+        role: 'DIRETOR' | 'COORDENADOR' | 'MEMBRO';
         isActive?: boolean;
     }): Promise<User>;
     
@@ -22,6 +22,4 @@ export interface UserRepository {
     update(data: UserUpdateBody, id: string): Promise<User>;
 
     deactivate(id: string): Promise<void>;
-
-    delete(id: string): Promise<void>;
 }

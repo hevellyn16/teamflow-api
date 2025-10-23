@@ -12,9 +12,10 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Sarah Connor",
-  "email": "sarah.connor@example.com",
-  "password": "securepassword"
+  "name": "Patrick Star",
+  "email": "patrick.star@example.com",
+  "password": "securepassword",
+  "role": "COORDENADOR"
 }
 
 ###
@@ -37,7 +38,7 @@ Content-Type: application/json
 
 {
   "email": "sarah.connor@example.com",
-  "password": "newsecurepassword"
+  "password": "securepassword"
 }
 
 ###
@@ -109,8 +110,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Teste",
-  "description": "Setor de teste"
+  "name": "Front-End",
+  "description": "Setor responsável pelo desenvolvimento do front-end."
 }
 
 ###
@@ -163,7 +164,7 @@ Authorization: Bearer {{authToken}}
 {
   "name": "Projeto Y",
   "description": "Descrição do Projeto X",
-  "sector": "8a8dc62d-b486-4f50-87d0-320ac8dbed4e"
+  "sector": "468c5d25-bdcd-45c6-afd6-7889f6972d21"
 }
 
 ###
@@ -176,11 +177,11 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name update_project
-PUT {{baseUrl}}/projects/6d691f5b-a605-4257-9821-46d9befdf535
+PUT {{baseUrl}}/projects/d9e394e7-426f-4f35-8061-d4939a600adc
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "startDate": "2025-10-20T23:23:03.031Z"
+  "users": ["sarah.connor@example.com"]
 }
 

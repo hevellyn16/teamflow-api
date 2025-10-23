@@ -30,5 +30,5 @@ export interface ProjectRepository {
 
     filterByUser(userId: string): Promise<Project[]>;
 
-    delete(id: string): Promise<Project | null>;
+    deactivate(id: string): Promise<Project | null>;
 }

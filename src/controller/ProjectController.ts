@@ -45,14 +45,14 @@ export class ProjectController {
         }
     }
 
-    deleteProject = async (request: any, reply: FastifyReply) => {
+    deactivateProject = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
         try {
-            const deletedProject = await this.projectService.deleteProject(id);
-            return reply.status(200).send(deletedProject);
+            await this.projectService.deactivateProject(id);
+            return reply.status(204).send();
         } catch (error) {
             return reply.status(404).send({ error: (error as Error).message });
         }

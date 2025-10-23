@@ -2,31 +2,40 @@ import { Project, ProjectStatus } from "@prisma/client";
 import { ProjectRepository } from "../repositories/interface/ProjectRepository";
 import { ProjectCreateBody } from "../dto/project/ProjectCreateBodySchema";
 import { ProjectUpdateBody } from "../dto/project/ProjectUpdateBodySchema";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export class ProjectService {
     constructor(private readonly projectRepository: ProjectRepository) {}
 
     async createProject(data: ProjectCreateBody): Promise<Project> {
-
-        const exists = await this.projectRepository.findByName(data.name);
-
-        const sector = data.sector ? data.sector : '';
-
-        if (exists && exists.sectorId === sector) {
-            throw new Error('Project with this name already exists');
+        try {
+            const project = await this.projectRepository.create(data); 
+            return project;
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    
+                    if ((error.meta?.target as string[])?.includes('unique_project_name_per_sector')) { 
+                        throw new Error("An active project with this name already exists in this sector.");
+                    }
+                    throw new Error("Failed to create project: uniqueness violation.");
+                }
+                
+                if (error.code === 'P2003' || error.code === 'P2025') {
+                     
+                     const field = error.meta?.field_name as string || ''; 
+                     if (field.includes('setorId')) { 
+                         throw new Error('Sector not found.');
+                     }
+                     if (field.includes('User')) { 
+                         throw new Error('One or more users not found.');
+                     }
+                    throw new Error('Related record not found.');
+                }
+            }
+            
+            throw error;
         }
-
-        const project = await this.projectRepository.create({
-            name: data.name,
-            description: data.description,
-            ProjectStatus: data.ProjectStatus as ProjectStatus,
-            sector: data.sector as string,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            users: data.users,
-        });
-        return project;
     }
 
     async getAllProjects(): Promise<Project[]> {
@@ -59,8 +68,15 @@ export class ProjectService {
         return updatedProject;
     }
 
-    async deleteProject(id: string): Promise<Project | null> {
-        return await this.projectRepository.delete(id);
+    async deactivateProject(id: string): Promise<void> {
+        const project = await this.projectRepository.findById(id);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+        await this.projectRepository.update(id, {
+            isActive: false,
+            updatedAt: new Date(),
+        });
     }
 
     async filterProjectsByName(name: string): Promise<Project | null> {

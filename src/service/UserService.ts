@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 import { UserCreateBody } from "../dto/user/UserCreateBodySchema";
 import { UserRepository } from "../repositories/interface/UserRepository";
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { UserUpdateBody, UserUpdateBodySchema } from "../dto/user/UserUpdateBodySchema";
 import { DIRUserUpdateBody, DIRUserUpdateBodySchema } from "../dto/user/DIRUserUpdateBodySchema";
 
@@ -9,6 +9,10 @@ export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
 
     async createUser(data: UserCreateBody): Promise<User> {
+        if (data.role === undefined) {
+                throw new Error('Role is required');
+        }
+        
         const userExistsByEmail = await this.userRepository.findByEmail(data.email);
 
         if (userExistsByEmail) {
@@ -16,15 +20,26 @@ export class UserService {
         }
 
         const passwordHash = await hash(data.password, 8);
-        const user = await this.userRepository.createUser({
-            name: data.name,
-            email: data.email,
-            password: passwordHash,
-            avatar: data.avatar,
-            role: data.role,
-            isActive: true,
-        });
-        return user;
+
+        try {
+            const user = await this.userRepository.createUser({
+                name: data.name,
+                email: data.email,
+                password: passwordHash,
+                avatar: data.avatar,
+                role: data.role,
+                isActive: true,
+            });
+            return user;
+        } catch (error) {
+            // Handle known Prisma errors
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    throw new Error('Email already in use');
+                }
+            }
+            throw error;
+        }
     }
 
     async getAllUsers(): Promise<User[]> {
@@ -111,13 +126,5 @@ export class UserService {
             throw new Error('User not found');
         }
         await this.userRepository.deactivate(id);
-    }
-
-    async deleteUser(id: string): Promise<void> {
-        const user = await this.userRepository.findById(id);
-        if (!user) {
-            throw new Error('User not found');
-        }
-        await this.userRepository.delete(id);
     }
 }
