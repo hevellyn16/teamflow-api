@@ -32,6 +32,8 @@ export interface ProjectRepository {
 
     removeMember(projectId: string, userIdToRemove: string): Promise<Project>;
 
+    addMember(projectId: string, userIdToAdd: string): Promise<Project>;
+
     listMyProjects(userId: string): Promise<Project[]>;
 
     delete(id: string): Promise<void>;

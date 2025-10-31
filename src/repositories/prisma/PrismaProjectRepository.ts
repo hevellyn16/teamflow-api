@@ -164,6 +164,28 @@ export class PrismaProjectRepository implements ProjectRepository {
         });
     }
 
+    addMember(projectId: string, userIdToAdd: string): Promise<Project> {
+        return prisma.project.update({
+            where: { id: projectId },
+            data: {
+                users: {
+                    connect: { id: userIdToAdd }
+                }
+            },
+            include: {
+                users: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        role: true,
+                    }
+                },
+                sector: true,
+            }
+        });
+    }
+
     async delete(id: string): Promise<void> {
         await prisma.project.delete({
             where: { id },

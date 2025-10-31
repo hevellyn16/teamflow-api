@@ -142,6 +142,19 @@ export class ProjectService {
         return this.projectRepository.removeMember(projectId, userIdToRemove);
     }
 
+    addMember = async (projectId: string, userIdToAdd: string): Promise<Project> => {
+
+        const project = await this.projectRepository.findById(projectId);
+        if (!project) {
+            throw new Error("Project not found.");
+        }
+        const userToAdd = await this.userRepository.findById(userIdToAdd);
+        if (!userToAdd) {
+            throw new Error("User to be added not found.");
+        }
+        return this.projectRepository.addMember(projectId, userIdToAdd);
+    }
+
     async deleteProject(id: string): Promise<void> {
         const project = await this.projectRepository.findById(id);
         if (!project) {

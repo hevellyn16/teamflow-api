@@ -139,6 +139,23 @@ export class ProjectController {
         }
     };
 
+    addMember = async (request: any, reply: FastifyReply) => {
+        const paramsSchema = z.object({
+            id: z.uuid(),
+            userId: z.uuid(),
+        });
+        const { id: projectId, userId: userIdToAdd } = paramsSchema.parse(request.params);
+        try {
+            const updatedProject = await this.projectService.addMember(
+                projectId,
+                userIdToAdd,
+            );
+            return reply.status(200).send(updatedProject);
+        } catch (err) {
+            throw err;
+        }
+    };
+
     verifyIfProjectHasMembers = async (request: any, reply: FastifyReply) => {
         const paramsSchema = z.object({
             id: z.uuid(),

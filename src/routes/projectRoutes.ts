@@ -111,8 +111,8 @@ export async function projectRoutes(app: FastifyInstance) {
                 tags: ['Projetos'],
                 security: [{ bearerAuth: [] }],
                 params: z.object({
-                    id: z.string().uuid("ID do projeto inválido."),
-                    userId: z.string().uuid("ID do usuário a ser removido inválido."),
+                    id: z.uuid("ID do projeto inválido."),
+                    userId: z.uuid("ID do usuário a ser removido inválido."),
                 }),
                 response: {
                     200: ProjectResponseSchema,
@@ -122,6 +122,29 @@ export async function projectRoutes(app: FastifyInstance) {
             }
         },
         projectController.removeMember
+    );
+
+    app.put(
+        '/projects/:id/members/:userId', 
+        {
+            onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
+            schema: {
+                summary: 'Adicionar um membro a um projeto',
+                description: 'Permite que Diretores ou Coordenadores de projeto adicionem um usuário a um projeto específico.',
+                tags: ['Projetos'],
+                security: [{ bearerAuth: [] }],
+                params: z.object({
+                    id: z.uuid("ID do projeto inválido."),
+                    userId: z.uuid("ID do usuário a ser adicionado inválido."),
+                }),
+                response: {
+                    200: ProjectResponseSchema,
+                    403: Error,
+                    404: Error,
+                }
+            }
+        },
+        projectController.addMember
     );
 
     app.delete('/projects/:id', {

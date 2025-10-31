@@ -51,7 +51,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name get_user_by_id
-GET {{baseUrl}}/users/5458fe2f-d047-43f2-a7dc-81a3047bb535
+GET {{baseUrl}}/users/151aaa22-20b6-4bea-91a2-b467acca93b6
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -76,18 +76,18 @@ Authorization: Bearer {{authMember}}
 ###
 
 # @name update_user
-PUT {{baseUrl}}/users/0680f316-1728-46f9-9933-c0bfb3e7e699
+PUT {{baseUrl}}/users/151aaa22-20b6-4bea-91a2-b467acca93b6
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "role": "COORDENADOR"
+  "isActive": true
 }
 
 ###
 
 # @name deactivate_user
-PATCH {{baseUrl}}/users/7c63a40d-6837-44bd-9224-ebc5d0ea11e0/deactivate
+PATCH {{baseUrl}}/users/151aaa22-20b6-4bea-91a2-b467acca93b6/deactivate
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -103,8 +103,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Back-End",
-  "description": "Setor responsável pelo desenvolvimento do back-end."
+  "name": "Front-End",
+  "description": "Setor responsável pelo desenvolvimento do front-end."
 }
 
 ###
@@ -117,7 +117,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name get_sector_by_id
-GET {{baseUrl}}/sectors/870d6369-16c2-47f5-8701-7108eabcbc3b
+GET {{baseUrl}}/sectors/c09e3605-928d-4b60-b057-6a95ce4ecdad
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -130,7 +130,7 @@ Authorization: Bearer {{authToken}}
 
 {
   "name": "Back-End",
-  "description": "Setor responsável pelo desenvolvimento do back-end.",
+  "description": "Setor responsável pelo desenvolvimento do back-end atualizado.",
   "isActive": true
 }
 
@@ -155,7 +155,7 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Projeto Y",
+  "name": "Projeto W",
   "description": "Descrição do Projeto X",
   "sector": "c09e3605-928d-4b60-b057-6a95ce4ecdad"
 }
@@ -175,8 +175,16 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "users": ["151aaa22-20b6-4bea-91a2-b467acca93b6", "7179e6d9-94a6-4b83-ae98-7fecb2b0dee4"]
+  "name": "Projeto X Atualizado",
+  "description": "Descrição atualizada do Projeto X",
+  "isActive": true
 }
+
+###
+
+# @name add_member_to_project
+PUT {{baseUrl}}/projects/59211c9e-8f80-41f4-9530-542549320901/members/6770df54-76b9-4e9e-b368-c88a68511cae
+Authorization: Bearer {{authToken}}
 
 ###
 
