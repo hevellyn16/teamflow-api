@@ -12,6 +12,10 @@ export class UserService {
         if (data.role === undefined) {
                 throw new Error('Role is required');
         }
+
+        if (data.role !== 'DIRETOR') {
+            throw new Error('Unauthorized action');
+        }
         
         const userExistsByEmail = await this.userRepository.findByEmail(data.email);
 
