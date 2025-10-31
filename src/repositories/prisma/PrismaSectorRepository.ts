@@ -70,4 +70,19 @@ export class PrismaSectorRepository implements SectorRepository {
         });
     }
 
+    async delete(id: string): Promise<void> {
+        await prisma.sector.delete({
+            where: { id },
+        });
+    }
+
+    async verifyIfSectorHasProjectsActive(sectorId: string): Promise<boolean> {
+        const activeProjects = await prisma.project.findFirst({
+            where: {
+                sectorId: sectorId,
+                isActive: true,
+            },
+        });
+        return activeProjects !== null;
+    }
 }

@@ -91,8 +91,7 @@ export class SectorController {
     listOrFilter = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
             name: z.string().min(1).optional(),
-            description: z.string().min(1).optional(),
-            isActive: z.coerce.boolean().optional(),
+            description: z.string().min(1).optional()
         });
         const filters = querySchema.parse(request.query);
 
@@ -102,6 +101,36 @@ export class SectorController {
         } catch (err) {
             console.error("Error fetching sectors:", err); 
             return reply.status(500).send({ error: "Internal server error" });
+        }
+    }
+
+    verifyIfSectorHasProjectsActive = async (request: any, reply: FastifyReply) => {
+        const paramsSchema = z.object({
+            id: z.uuid(),
+        });
+        const { id } = paramsSchema.parse(request.params);
+        try {
+            const hasActiveProjects = await this.sectorService.verifyIfSectorHasProjectsActive(id);
+            return reply.status(200).send({ hasActiveProjects });
+        } catch (error) {
+            return reply.status(404).send({ error: (error as Error).message });
+        }
+    }
+
+    deleteSector = async (request: any, reply: FastifyReply) => {
+        const paramsSchema = z.object({
+            id: z.uuid(),
+        });
+        const { id } = paramsSchema.parse(request.params);
+        const verifyifHasProjectsActive = await this.sectorService.verifyIfSectorHasProjectsActive(id);
+        if (verifyifHasProjectsActive) {
+            return reply.status(400).send({ error: "Cannot delete sector with active projects." });
+        }
+        try {
+            await this.sectorService.deleteSector(id);
+            return reply.status(204).send();
+        } catch (error) {
+            return reply.status(404).send({ error: (error as Error).message });
         }
     }
 }

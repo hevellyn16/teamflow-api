@@ -23,4 +23,8 @@ export interface SectorRepository {
     filterByIsActive(isActive: boolean): Promise<Sector[]>;
 
     listOrFilter(filters: { name?: string; description?: string}): Promise<Sector[]>;
+
+    delete(id: string): Promise<void>;
+
+    verifyIfSectorHasProjectsActive(sectorId: string): Promise<boolean>;
 }

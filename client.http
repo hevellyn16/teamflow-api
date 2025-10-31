@@ -97,12 +97,6 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-# @name delete_user
-DELETE {{baseUrl}}/users/c5436f52-1a2e-45c9-a11b-2d6ceb15a283
-Authorization: Bearer {{authToken}}
-
-###
-
 # @name create_sector
 POST {{baseUrl}}/sectors
 Content-Type: application/json
@@ -137,13 +131,13 @@ Authorization: Bearer {{authToken}}
 {
   "name": "Back-End",
   "description": "Setor responsável pelo desenvolvimento do back-end.",
-  "isActive": false
+  "isActive": true
 }
 
 ###
 
 # @name delete_sector
-DELETE {{baseUrl}}/sectors/11f422a1-ac34-4224-a698-36ea3f0e00a5
+DELETE {{baseUrl}}/sectors/c09e3605-928d-4b60-b057-6a95ce4ecdad
 Authorization: Bearer {{authToken}}
 
 ###

@@ -74,4 +74,12 @@ export class SectorService {
     async listOrFilter(filters: any): Promise<Sector[]> {
         return this.sectorRepository.listOrFilter(filters);
     }
+
+    async deleteSector(id: string): Promise<void> {
+        await this.sectorRepository.delete(id);
+    }
+
+    async verifyIfSectorHasProjectsActive(sectorId: string): Promise<boolean> {
+        return this.sectorRepository.verifyIfSectorHasProjectsActive(sectorId);
+    }
 }
