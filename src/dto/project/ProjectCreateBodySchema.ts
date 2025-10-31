@@ -1,4 +1,4 @@
-import {z} from "zod";
+import {object, z} from "zod";
 
 export const ProjectCreateBodySchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -8,8 +8,9 @@ export const ProjectCreateBodySchema = z.object({
   updatedAt: z.date().optional().default(new Date()),
   ProjectStatus: z.enum(['PLANEJAMENTO', 'EM_ANDAMENTO', 'PAUSADO', 'CONCLUIDO']).optional().default('PLANEJAMENTO'),
   sector: z.uuid("Sector ID must be a valid UUID"),
-  users: z.array(z.email("User email must be a valid email")).optional(),
+  users: z.array(z.uuid("User ID must be a valid UUID")).optional(),
   startDate: z.coerce.date().optional(),
+  objective: z.string().optional(),
 });
 
 export type ProjectCreateBody = z.infer<typeof ProjectCreateBodySchema>;

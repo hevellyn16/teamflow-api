@@ -33,6 +33,10 @@ export async function userRoutes(app: FastifyInstance) {
             summary: 'Buscar o próprio perfil',
             tags: ['Perfil do Usuário'],
             security: [{ bearerAuth: [] }],
+            query: z.object({
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
             response: { 200: UserResponseSchema }
         }
     }, userController.getProfile);
@@ -77,6 +81,10 @@ export async function userRoutes(app: FastifyInstance) {
             description: 'Permite que um Diretor liste todas as contas de usuários.',
             tags: ['Gerenciamento de Usuários'],
             security: [{ bearerAuth: [] }],
+            query: z.object({
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
             response: { 200: z.array(UserResponseSchema) }
         }
     }, userController.getAllUsers);
@@ -88,6 +96,10 @@ export async function userRoutes(app: FastifyInstance) {
             tags: ['Gerenciamento de Usuários'],
             security: [{ bearerAuth: [] }],
             params: z.object({ id: z.uuid() }),
+            query: z.object({
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
             response: { 200: UserResponseSchema }
         }
     }, userController.getUserById);

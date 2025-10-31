@@ -43,7 +43,7 @@ export class PrismaProjectRepository implements ProjectRepository {
 
         if (users) {
             updateData.users = {
-                set: users.map((email) => ({ email })),
+                set: users.map((id) => ({ id })),
             };
         }
 
@@ -66,11 +66,20 @@ export class PrismaProjectRepository implements ProjectRepository {
     async findById(id: string): Promise<Project | null> {
         return await prisma.project.findUnique({
             where: { id },
+            include: { users: true },
         });
     }
 
-    async findAll(): Promise<Project[]> {
-        return await prisma.project.findMany();
+    async findAll(page:number, pageSize:number): Promise<Project[]> {
+        const skipAmount = page * pageSize;
+
+        return await prisma.project.findMany({
+            where: { isActive: true },
+            skip: skipAmount,
+            take: pageSize,
+            orderBy: { createdAt: 'desc' },
+            include: { sector: true, users: true },
+        });
     }
 
     async findByName(name: string): Promise<Project | null> {
@@ -78,12 +87,6 @@ export class PrismaProjectRepository implements ProjectRepository {
             where: { 
                 name: { contains: name, mode: 'insensitive' }
             },
-        });
-    }
-
-    async filterByIsActive(isActive: boolean): Promise<Project[]> {
-        return await prisma.project.findMany({
-            where: { isActive },
         });
     }
 
@@ -102,12 +105,37 @@ export class PrismaProjectRepository implements ProjectRepository {
     async filterByUser(userId: string): Promise<Project[]> {
         return await prisma.project.findMany({
             where: {
+                isActive: true,
                 users: {
                     some: {
                         id: userId,
                     },
                 },
             },
+            include: { sector: true, users: true },
+        });
+    }
+
+    async removeMember(projectId: string, userId: string): Promise<Project> {
+        return prisma.project.update({
+            where: { id: projectId },
+            data: {
+                users: {
+                    disconnect: { id: userId }
+                }
+            },
+    
+            include: {
+                users: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        role: true,
+                    }
+                },
+                sector: true,
+            }
         });
     }
 }

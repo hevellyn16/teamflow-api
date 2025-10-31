@@ -12,16 +12,15 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Patrick Star",
-  "email": "patrick.star@example.com",
+  "name": "Sarah Connor",
+  "email": "sarah.connor@teamflow.com",
   "password": "securepassword",
-  "role": "COORDENADOR"
+  "role": "MEMBRO"
 }
 
 ###
 
 # @name diretor_authenticate_user
-
 POST {{baseUrl}}/sessions
 Content-Type: application/json
 
@@ -37,8 +36,8 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "sarah.connor@example.com",
-  "password": "securepassword"
+  "email": "sarah.connor@teamflow.com",
+  "password": "newsecurepassword"
 }
 
 ###
@@ -110,8 +109,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Front-End",
-  "description": "Setor responsável pelo desenvolvimento do front-end."
+  "name": "Back-End",
+  "description": "Setor responsável pelo desenvolvimento do back-end."
 }
 
 ###
@@ -131,14 +130,14 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name update_sector
-PUT {{baseUrl}}/sectors/8bdc976b-74be-45d1-b497-a6fbcfb46fae
+PUT {{baseUrl}}/sectors/c09e3605-928d-4b60-b057-6a95ce4ecdad
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Front-End",
-  "description": "Setor responsável pelo desenvolvimento do front-end.",
-  "isActive": true
+  "name": "Back-End",
+  "description": "Setor responsável pelo desenvolvimento do back-end.",
+  "isActive": false
 }
 
 ###
@@ -150,7 +149,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name list_or_filter_sectors
-GET {{baseUrl}}/sectors?name=Teste&isActive=false
+GET {{baseUrl}}/sectors/filter?name=back
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -164,7 +163,7 @@ Authorization: Bearer {{authToken}}
 {
   "name": "Projeto Y",
   "description": "Descrição do Projeto X",
-  "sector": "468c5d25-bdcd-45c6-afd6-7889f6972d21"
+  "sector": "c09e3605-928d-4b60-b057-6a95ce4ecdad"
 }
 
 ###
@@ -177,11 +176,22 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name update_project
-PUT {{baseUrl}}/projects/d9e394e7-426f-4f35-8061-d4939a600adc
+PUT {{baseUrl}}/projects/c94a1b99-18f5-46c0-a61f-9d384f65e5c2
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "users": ["sarah.connor@example.com"]
+  "users": ["151aaa22-20b6-4bea-91a2-b467acca93b6", "7179e6d9-94a6-4b83-ae98-7fecb2b0dee4"]
 }
 
+###
+
+# @name delete_member_from_project
+DELETE {{baseUrl}}/projects/c94a1b99-18f5-46c0-a61f-9d384f65e5c2/members/7179e6d9-94a6-4b83-ae98-7fecb2b0dee4
+Authorization: Bearer {{authToken}}
+
+###
+
+# @name view_my_projects
+GET {{baseUrl}}/projects/my-projects/151aaa22-20b6-4bea-91a2-b467acca93b6
+Authorization: Bearer {{authMember}}

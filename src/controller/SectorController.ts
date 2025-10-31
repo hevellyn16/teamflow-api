@@ -4,7 +4,7 @@ import { SectorUpdateBodySchema } from "../dto/sector/SectorUpdateBodySchema";
 import { SectorService } from "../service/SectorService";
 import { z } from "zod";
 import { PrismaSectorRepository } from "../repositories/prisma/PrismaSectorRepository";
-import { request } from "https";
+
 
 export class SectorController {
     private readonly sectorService = new SectorService(new PrismaSectorRepository());
@@ -89,7 +89,12 @@ export class SectorController {
     }
 
     listOrFilter = async (request: any, reply: FastifyReply) => {
-        const filters = request.query as { name?: string; description?: string; isActive?: boolean };
+        const querySchema = z.object({
+            name: z.string().min(1).optional(),
+            description: z.string().min(1).optional(),
+            isActive: z.coerce.boolean().optional(),
+        });
+        const filters = querySchema.parse(request.query);
 
         try {
             const sectors = await this.sectorService.listOrFilter(filters);

@@ -4,9 +4,11 @@ import { ProjectUpdateBodySchema } from "../dto/project/ProjectUpdateBodySchema"
 import { ProjectService } from "../service/ProjectService";
 import { email, z } from "zod";
 import { PrismaProjectRepository } from "../repositories/prisma/PrismaProjectRepository";
+import { PrismaUserRepository } from "../repositories/prisma/PrismaUserRepository";
 
 export class ProjectController {
-    private readonly projectService = new ProjectService(new PrismaProjectRepository());
+    private readonly projectService = new ProjectService(new PrismaProjectRepository(), new PrismaUserRepository());
+
 
     createProject = async (request: any, reply: FastifyReply) => {
         const body = ProjectCreateBodySchema.parse(request.body);
@@ -15,7 +17,8 @@ export class ProjectController {
     }
 
     getAllProjects = async (request: any, reply: FastifyReply) => {
-        const projects = await this.projectService.getAllProjects();
+        const { page, pageSize } = request.query as { page: number, pageSize: number }; // Zod já validou
+        const projects = await this.projectService.getAllProjects(page, pageSize);
         return reply.status(200).send(projects);
     }
 
@@ -36,9 +39,11 @@ export class ProjectController {
             id: z.uuid(),
         });
         const { id } = paramsSchema.parse(request.params);
+        const actorId = request.user.sub;
+        const actorRole = request.user.role;
         const body = ProjectUpdateBodySchema.parse(request.body);
         try {
-            const updatedProject = await this.projectService.updateProject(id, body);
+            const updatedProject = await this.projectService.updateProject(id, body, actorId, actorRole);
             return reply.status(200).send(updatedProject);
         } catch (error) {
             return reply.status(404).send({ error: (error as Error).message });
@@ -67,18 +72,9 @@ export class ProjectController {
         return reply.status(200).send(projects);
     }
 
-    filterProjectsByIsActive = async (request: any, reply: FastifyReply) => {
-        const querySchema = z.object({
-            isActive: z.coerce.boolean(),
-        });
-        const { isActive } = querySchema.parse(request.query);
-        const projects = await this.projectService.filterProjectsByIsActive(isActive);
-        return reply.status(200).send(projects);
-    }
-
     filterProjectsBySector = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
-            sectorId: z.string().uuid(),
+            sectorId: z.uuid(),
         });
         const { sectorId } = querySchema.parse(request.query);
         const projects = await this.projectService.filterProjectsBySector(sectorId);
@@ -87,7 +83,7 @@ export class ProjectController {
 
     filterProjectsByUser = async (request: any, reply: FastifyReply) => {
         const querySchema = z.object({
-            userId: z.string().uuid(),
+            userId: z.uuid(),
         });
         const { userId } = querySchema.parse(request.query);
         const projects = await this.projectService.filterProjectsByUser(userId);
@@ -102,4 +98,32 @@ export class ProjectController {
         const projects = await this.projectService.filterProjectsByName(name);
         return reply.status(200).send(projects);
     }
-}   
+
+    listMyProjects = async (request: any, reply: FastifyReply) => {
+        const userId = request.user.id;
+        const projects = await this.projectService.filterProjectsByUser(userId);
+        return reply.status(200).send(projects);
+    }
+    
+    removeMember = async (request: any, reply: FastifyReply) => {
+        const paramsSchema = z.object({
+            id: z.uuid(),
+            userId: z.uuid(),
+        });
+        const { id: projectId, userId: userIdToRemove } = paramsSchema.parse(request.params);
+        const actorId = request.user.sub;
+        const actorRole = request.user.role;
+
+        try {
+            const updatedProject = await this.projectService.removeMember(
+                projectId,
+                userIdToRemove,
+                actorId,
+                actorRole
+            );
+            return reply.status(200).send(updatedProject);
+        } catch (err) {
+            throw err;
+        }
+    };
+}

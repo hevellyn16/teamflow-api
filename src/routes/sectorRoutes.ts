@@ -10,7 +10,7 @@ const SetorResponseSchema = z.object({
     id: z.uuid(),
     name: z.string(),
     description: z.string().nullable(),
-    isActive: z.boolean(),
+    isActive: z.coerce.boolean(),
 });
 
 export async function sectorRoutes(app: FastifyInstance) {
@@ -36,6 +36,10 @@ export async function sectorRoutes(app: FastifyInstance) {
             description: 'Permite que um Diretor veja todos os setores cadastrados.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
+            query: z.object({
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
             response: { 200: z.array(SetorResponseSchema) },
         }
     }, sectorController.getAllSectors);
@@ -49,6 +53,8 @@ export async function sectorRoutes(app: FastifyInstance) {
             security: [{ bearerAuth: [] }],
             params: z.object({
                 id: z.uuid(),
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
             }),
             response: { 200: SetorResponseSchema },
         }
@@ -83,17 +89,18 @@ export async function sectorRoutes(app: FastifyInstance) {
         }
     }, sectorController.deactivateSector);
 
-     app.get('/sector', {
+    app.get('/sectors/filter', {
         preHandler: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: {
             summary: 'Listar ou filtrar setores (Diretor)',
             description: 'Permite que um Diretor liste todos os setores ou filtre por nome, descrição ou status ativo.',
             tags: ['Setores'],
             security: [{ bearerAuth: [] }],
-            params: z.object({
-                name: z.string().min(1).optional(),
-                description: z.string().min(1).optional(),
-                isActive: z.coerce.boolean().optional(),
+            query: z.object({
+                name: z.string().optional(),
+                description: z.string().optional(),
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
             }),
             response: { 200: z.array(SetorResponseSchema) },
     }

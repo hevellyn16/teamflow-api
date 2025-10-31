@@ -1,4 +1,4 @@
-import { Sector } from "@prisma/client";
+import { Prisma, Sector } from "@prisma/client";
 import { SectorUpdateBody } from "../../dto/sector/SectorUpdateBodySchema";
 import { SectorCreateBody } from "../../dto/sector/SectorCreateBodySchema";
 import { SectorRepository } from "../interface/SectorRepository";
@@ -56,16 +56,13 @@ export class PrismaSectorRepository implements SectorRepository {
         });
     }
 
-    async listOrFilter(filters: any): Promise<Sector[]> {
-        const whereClause: any = {};
+    async listOrFilter(filters: { name?: string; description?: string}): Promise<Sector[]> {
+        const whereClause: Prisma.SectorWhereInput = {};
         if (filters.name) {
             whereClause.name = { contains: filters.name, mode: 'insensitive' };
         }
         if (filters.description) {
             whereClause.description = { contains: filters.description, mode: 'insensitive' };
-        }
-        if (filters.isActive !== undefined) {
-            whereClause.isActive = filters.isActive === 'true';
         }
         return await prisma.sector.findMany({
             where: whereClause,

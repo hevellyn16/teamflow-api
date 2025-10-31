@@ -18,11 +18,9 @@ export interface ProjectRepository {
 
     findById(id: string): Promise<Project | null>;
 
-    findAll(): Promise<Project[]>;
+    findAll(page: number, pageSize: number): Promise<Project[]>;
 
     findByName(name: string): Promise<Project | null>;
-
-    filterByIsActive(isActive: boolean): Promise<Project[]>;
 
     filterByStatus(status: string): Promise<Project[]>;
 
@@ -31,4 +29,6 @@ export interface ProjectRepository {
     filterByUser(userId: string): Promise<Project[]>;
 
     deactivate(id: string): Promise<Project | null>;
+
+    removeMember(projectId: string, userIdToRemove: string): Promise<Project>;
 }

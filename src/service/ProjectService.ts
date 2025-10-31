@@ -1,11 +1,15 @@
-import { Project, ProjectStatus } from "@prisma/client";
+import { Project, ProjectStatus, Role } from "@prisma/client";
 import { ProjectRepository } from "../repositories/interface/ProjectRepository";
 import { ProjectCreateBody } from "../dto/project/ProjectCreateBodySchema";
 import { ProjectUpdateBody } from "../dto/project/ProjectUpdateBodySchema";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { UserRepository } from "../repositories/interface/UserRepository";
 
 export class ProjectService {
-    constructor(private readonly projectRepository: ProjectRepository) {}
+    constructor(
+        private readonly projectRepository: ProjectRepository,
+        private readonly userRepository: UserRepository
+    ) {}
 
     async createProject(data: ProjectCreateBody): Promise<Project> {
         try {
@@ -18,7 +22,6 @@ export class ProjectService {
                     if ((error.meta?.target as string[])?.includes('unique_project_name_per_sector')) { 
                         throw new Error("An active project with this name already exists in this sector.");
                     }
-                    throw new Error("Failed to create project: uniqueness violation.");
                 }
                 
                 if (error.code === 'P2003' || error.code === 'P2025') {
@@ -38,8 +41,8 @@ export class ProjectService {
         }
     }
 
-    async getAllProjects(): Promise<Project[]> {
-        return await this.projectRepository.findAll();
+    async getAllProjects(page: number, pageSize: number): Promise<Project[]> {
+        return await this.projectRepository.findAll( page, pageSize);
     }
 
     async getProjectById(id: string): Promise<Project | null> {
@@ -50,11 +53,18 @@ export class ProjectService {
         return project;
     }
 
-    async updateProject(id: string, data: ProjectUpdateBody): Promise<Project | null> {
+    async updateProject(id: string, data: ProjectUpdateBody, actorId: string, actorRole: string): Promise<Project | null> {
         const project = await this.projectRepository.findById(id); 
         
         if (!project) {
             throw new Error('Project not found');
+        }
+
+        if (actorRole === 'COORDENADOR') {
+            const isUserInProject = await this.projectRepository.filterByUser(actorId);
+            if (!isUserInProject) {
+                throw new Error('Coordenador não autorizado a atualizar este projeto');
+            }
         }
 
         if (data.name) {
@@ -95,7 +105,39 @@ export class ProjectService {
         return await this.projectRepository.filterByUser(userId);
     }
 
-    async filterProjectsByIsActive(isActive: boolean): Promise<Project[] | null> {
-        return await this.projectRepository.filterByIsActive(isActive);
+    async listMyProjects(userId: string, actorId: string): Promise<Project[]> {
+        
+        const user = await this.projectRepository.filterByUser(userId);
+
+        if (actorId !== userId) {
+            throw new Error("You are not authorized to view projects of other users.");
+        }
+
+        return user;
+    }
+
+    async removeMember(projectId: string, userIdToRemove: string, actorId: string, actorRole: Role): Promise<Project> {
+
+        const project = await this.projectRepository.findById(projectId);
+        if (!project) {
+            throw new Error("Project not found.");
+        }
+
+        const userToRemove = await this.userRepository.findById(userIdToRemove);
+        if (!userToRemove) {
+            throw new Error("User to be removed not found.");
+        }
+
+        if (actorRole === Role.COORDENADOR) {
+            const isMember = await this.projectRepository.filterByUser(actorId);
+            if (!isMember) {
+                throw new Error("Coordenador is not authorized to remove members from this project.");
+            }
+            if (userToRemove.role === Role.DIRETOR) {
+                throw new Error("Coordenador cannot remove Director from projects.");
+            }
+        }
+
+        return this.projectRepository.removeMember(projectId, userIdToRemove);
     }
 }

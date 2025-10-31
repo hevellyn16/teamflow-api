@@ -19,8 +19,9 @@ const ProjectResponseSchema = z.object({
     createdAt: z.date(),
     updatedAt: z.date().optional(),
     users: z.array(z.object({
-        email: z.email(),
+        id: z.uuid(),
     })).optional(),
+    objective: z.string().nullable().optional(),
 });
 
 export async function projectRoutes(app: FastifyInstance) {
@@ -28,10 +29,10 @@ export async function projectRoutes(app: FastifyInstance) {
 
     /** Rotas de Gerenciamento de Projetos (Acesso de Gerente e Diretor) **/
     app.post('/projects', {
-        onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
+        onRequest: [authMiddleware, verifyUserRole('DIRETOR')],
         schema: { 
-            summary: 'Criar um novo projeto (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor crie novos projetos.',
+            summary: 'Criar um novo projeto (Diretor/Coordenador)',
+            description: 'Permite que um Diretor ou Coordenador crie novos projetos.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             body: ProjectCreateBodySchema,
@@ -42,10 +43,14 @@ export async function projectRoutes(app: FastifyInstance) {
     app.get('/projects', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
-            summary: 'Listar todos os projetos (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor veja todos os projetos cadastrados.',
+            summary: 'Listar todos os projetos (Diretor/Coordenador)',
+            description: 'Permite que um Diretor ou Coordenador veja todos os projetos cadastrados.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
+            query: z.object({
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
             response: { 200: z.array(ProjectResponseSchema) },
         }
     }, projectController.getAllProjects);
@@ -54,12 +59,14 @@ export async function projectRoutes(app: FastifyInstance) {
     app.get('/projects/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
-            summary: 'Obter um projeto por ID (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor veja os detalhes de um projeto específico.',
+            summary: 'Obter um projeto por ID (Diretor/Coordenador)',
+            description: 'Permite que um Diretor ou Coordenador veja os detalhes de um projeto específico.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             params: z.object({
                 id: z.uuid(),
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
             }),
             response: { 200: ProjectResponseSchema },
         }
@@ -68,8 +75,8 @@ export async function projectRoutes(app: FastifyInstance) {
     app.put('/projects/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
-            summary: 'Atualizar um projeto por ID (Gerente/Diretor)',
-            description: 'Permite que um Coordenador ou Diretor atualize os detalhes de um projeto específico.',
+            summary: 'Atualizar um projeto por ID (Diretor/Coordenador)',
+            description: 'Permite que um Diretor ou Coordenador atualize os detalhes de um projeto específico.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             params: z.object({
@@ -83,8 +90,8 @@ export async function projectRoutes(app: FastifyInstance) {
     app.put('/projects/deact/:id', {
         onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
         schema: {
-            summary: 'Desativar um projeto por ID (Gerente/Diretor)',
-            description: 'Permite que um Gerente ou Diretor desative um projeto específico.',
+            summary: 'Desativar um projeto por ID (Diretor/Coordenador)',
+            description: 'Permite que um Diretor ou Coordenador desative um projeto específico.',
             tags: ['Projetos'],
             security: [{ bearerAuth: [] }],
             params: z.object({
@@ -93,4 +100,44 @@ export async function projectRoutes(app: FastifyInstance) {
             response: { 204: z.void() },
         }
     }, projectController.deactivateProject);
+
+    app.delete(
+        '/projects/:id/members/:userId', 
+        {
+            onRequest: [authMiddleware, verifyUserRole('DIRETOR') || verifyUserRole('COORDENADOR')],
+            schema: {
+                summary: 'Remover um membro de um projeto',
+                description: 'Permite que Diretores ou Coordenadores de projeto removam um usuário de um projeto específico.',
+                tags: ['Projetos'],
+                security: [{ bearerAuth: [] }],
+                params: z.object({
+                    id: z.string().uuid("ID do projeto inválido."),
+                    userId: z.string().uuid("ID do usuário a ser removido inválido."),
+                }),
+                response: {
+                    200: ProjectResponseSchema,
+                    403: Error, 
+                    404: Error, 
+                }
+            }
+        },
+        projectController.removeMember
+    );
+
+    /* Rotas de usuários */
+    app.get('/projects/my-projects/:id', {
+        onRequest: [authMiddleware],
+        schema: {
+            summary: 'Listar meus projetos',
+            description: 'Permite que um usuário veja todos os seus projetos.',
+            tags: ['Projetos'],
+            security: [{ bearerAuth: [] }],
+            query: z.object({
+                id: z.uuid(),
+                page: z.coerce.number().int().min(0).optional().default(0),
+                pageSize: z.coerce.number().int().min(1).max(100).optional().default(10),
+            }),
+            response: { 200: z.array(ProjectResponseSchema) },
+        }
+    }, projectController.listMyProjects);
 }
