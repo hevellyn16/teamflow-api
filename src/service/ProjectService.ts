@@ -86,6 +86,7 @@ export class ProjectService {
         await this.projectRepository.update(id, {
             isActive: false,
             updatedAt: new Date(),
+            isDeleted: false
         });
     }
 
@@ -101,13 +102,13 @@ export class ProjectService {
         return await this.projectRepository.filterBySector(sectorId);
     }
 
-    async filterProjectsByUser(userId: string): Promise<Project[] | null> {
+    async filterProjectsByUser(userId: string): Promise<Project[] | undefined> {
         return await this.projectRepository.filterByUser(userId);
     }
 
     async listMyProjects(userId: string, actorId: string): Promise<Project[]> {
         
-        const user = await this.projectRepository.filterByUser(userId);
+        const user = await this.projectRepository.listMyProjects(userId);
 
         if (actorId !== userId) {
             throw new Error("You are not authorized to view projects of other users.");
@@ -139,5 +140,17 @@ export class ProjectService {
         }
 
         return this.projectRepository.removeMember(projectId, userIdToRemove);
+    }
+
+    async deleteProject(id: string): Promise<void> {
+        const project = await this.projectRepository.findById(id);
+        if (!project) {
+            throw new Error("Project not found.");
+        }
+        await this.projectRepository.delete(id);
+    }
+
+    async verifyIfProjectHasMembers(projectId: string): Promise<boolean> {
+        return this.projectRepository.verifyIfProjectHasMembers(projectId);
     }
 }

@@ -11,6 +11,8 @@ export const ProjectUpdateBodySchema = z.object({
   users: z.array(z.uuid("User ID must be a valid UUID")).optional(),
   startDate: z.coerce.date().optional(),
   objective: z.string().optional(),
+  isDeleted: z.boolean().optional().default(false),
+  deletedAt: z.coerce.date().optional(),
 });
 
 export type ProjectUpdateBody = z.infer<typeof ProjectUpdateBodySchema>;

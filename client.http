@@ -12,8 +12,8 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "name": "Sarah Connor",
-  "email": "sarah.connor@teamflow.com",
+  "name": "Bruce Wayne",
+  "email": "bruce.wayne@teamflow.com",
   "password": "securepassword",
   "role": "MEMBRO"
 }
@@ -176,7 +176,7 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name update_project
-PUT {{baseUrl}}/projects/c94a1b99-18f5-46c0-a61f-9d384f65e5c2
+PUT {{baseUrl}}/projects/59211c9e-8f80-41f4-9530-542549320901
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -193,5 +193,11 @@ Authorization: Bearer {{authToken}}
 ###
 
 # @name view_my_projects
-GET {{baseUrl}}/projects/my-projects/151aaa22-20b6-4bea-91a2-b467acca93b6
+GET {{baseUrl}}/projects/my-projects
 Authorization: Bearer {{authMember}}
+
+###
+
+# @name delete_project
+DELETE {{baseUrl}}/projects/59211c9e-8f80-41f4-9530-542549320901
+Authorization: Bearer {{authToken}}

@@ -116,6 +116,31 @@ export class PrismaProjectRepository implements ProjectRepository {
         });
     }
 
+    async listMyProjects(userId: string): Promise<Project[]> {
+        return await prisma.project.findMany({
+            where: {
+                isActive: true,
+                users: {
+                    some: {
+                        id: userId,
+                    },
+                },
+            },
+            include: {
+                sector: true, 
+                users: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        role: true,
+                    }
+                }
+            },
+            orderBy: { name: 'asc' },
+        });
+    }
+
     async removeMember(projectId: string, userId: string): Promise<Project> {
         return prisma.project.update({
             where: { id: projectId },
@@ -136,6 +161,24 @@ export class PrismaProjectRepository implements ProjectRepository {
                 },
                 sector: true,
             }
+        });
+    }
+
+    async delete(id: string): Promise<void> {
+        await prisma.project.delete({
+            where: { id },
+        });
+    }
+
+    verifyIfProjectHasMembers(projectId: string): Promise<boolean> {
+        return prisma.project.findUnique({
+            where: { id: projectId },
+            select: { users: { select: { id: true } } }
+        }).then(project => {
+            if (!project) {
+                throw new Error("Project not found.");
+            }
+            return project.users && project.users.length > 0;
         });
     }
 }

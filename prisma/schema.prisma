@@ -43,6 +43,8 @@ model Sector {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   isActive  Boolean  @default(true) @map("is_active")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  deletedAt DateTime? @map("deleted_at")
 
   projects  Project[]
 
@@ -60,6 +62,8 @@ model Project {
   status      ProjectStatus @default(PLANEJAMENTO)
   startDate   DateTime? @map("start_date")
   objective    String?
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  deletedAt   DateTime? @map("deleted_at")
 
   sectorId String @map("sector_id")
   sector   Sector @relation(fields: [sectorId], references: [id])

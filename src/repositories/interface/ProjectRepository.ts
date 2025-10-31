@@ -26,9 +26,15 @@ export interface ProjectRepository {
 
     filterBySector(sectorId: string): Promise<Project[]>;
 
-    filterByUser(userId: string): Promise<Project[]>;
+    filterByUser(userId: string): Promise<Project[] | undefined>;
 
     deactivate(id: string): Promise<Project | null>;
 
     removeMember(projectId: string, userIdToRemove: string): Promise<Project>;
+
+    listMyProjects(userId: string): Promise<Project[]>;
+
+    delete(id: string): Promise<void>;
+
+    verifyIfProjectHasMembers(projectId: string): Promise<boolean>;
 }
